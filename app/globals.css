@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0b0a09;
+  --surface: #15120f;
+  --ivory: #f6f0e6;
+  --text: #f3ece0;
+  --text-soft: #b9ae9c;
+  --ink: #1b1612;
+  --primary: #d9a441;
+  --accent: #f0c877;
+  --border: #3a3027;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body), sans-serif; font-size: 16px; line-height: 1.7; overflow-x: hidden; }
+@media (min-width: 768px) { body { font-size: 18px; } }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.h1 { font-family: var(--font-display), serif; font-weight: 500; line-height: 1.05; font-size: clamp(2.6rem, 7vw, 4.75rem); }
+.h2 { font-family: var(--font-display), serif; font-weight: 500; line-height: 1.12; font-size: clamp(2rem, 4.5vw, 3rem); }
+.h3 { font-family: var(--font-display), serif; font-weight: 500; font-size: clamp(1.375rem, 2.5vw, 1.625rem); }
+.caption { font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary); }
+@media (min-width: 768px) { .caption { font-size: 0.8125rem; } }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 28px;
+  background: var(--primary); color: var(--ink); font-weight: 500; letter-spacing: 0.04em; border-radius: 2px;
+  transition: background 200ms, box-shadow 200ms, transform 200ms;
+}
+.btn:hover { background: var(--accent); box-shadow: 0 0 24px rgba(217, 164, 65, 0.3); }
+.btn-ghost { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+.btn-ghost:hover { background: transparent; color: var(--accent); border-color: var(--accent); }
+
+.section { padding: 72px 0; }
+@media (min-width: 768px) { .section { padding: 128px 0; } }
+.container-x { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+@media (min-width: 768px) { .container-x { padding: 0 32px; } }
+
+.rule { height: 1px; width: 64px; background: var(--primary); }
+.field { width: 100%; min-height: 48px; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 2px; transition: border-color 200ms; }
+.field:focus { border-color: var(--primary); outline: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
