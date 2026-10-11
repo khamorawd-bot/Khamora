@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { signIn } from "../actions";
 
 export default function Login() {
   const router = useRouter();
@@ -13,11 +13,9 @@ export default function Login() {
     setBusy(true);
     setError("");
     const f = new FormData(e.currentTarget);
-    const { error } = await createClient().auth.signInWithPassword({
-      email: String(f.get("email")), password: String(f.get("password")),
-    });
+    const res = await signIn(String(f.get("email")), String(f.get("password")));
     setBusy(false);
-    if (error) return setError("E-mail ou senha incorretos.");
+    if (!res.ok) return setError(res.error ?? "Erro ao entrar.");
     router.replace("/admin");
     router.refresh();
   }

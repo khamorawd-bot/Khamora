@@ -2,7 +2,6 @@
 import { useState, useTransition } from "react";
 import { updateLead } from "./actions";
 import { STATUSES, SUBJECTS, type Lead, type Status, type Subject } from "@/lib/leads";
-import { waLink } from "@/lib/config";
 
 function waFor(lead: Lead) {
   const digits = lead.phone.replace(/\D/g, "");
@@ -70,7 +69,6 @@ export default function LeadBoard({ leads }: { leads: Lead[] }) {
           </li>
         ))}
       </ul>
-      <p className="mt-8 text-xs text-soft">Telefone da Silvana configurado em lib/config.ts: {waLink().split("?")[0]}</p>
     </div>
   );
 }
