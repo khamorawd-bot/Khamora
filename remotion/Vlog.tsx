@@ -11,14 +11,17 @@ import {
 } from "remotion";
 
 export const FPS = 30;
-export const A_FRAMES = 475;
+export const OPEN_FRAMES = 145;
+export const A_CUT = 90; // first 3s of a.mp4 is the old brown-shirt intro
+export const A_FRAMES = 475 - A_CUT;
 export const B_FRAMES = 499;
 export const FLASH = 6;
-export const VLOG_FRAMES = A_FRAMES + B_FRAMES - FLASH;
+export const VLOG_FRAMES = OPEN_FRAMES + A_FRAMES + B_FRAMES - 2 * FLASH;
 
 // Slow push-in with a small "punch" zoom at each cut point.
-const Punchy: React.FC<{ src: string; punches: number[]; drift: number; children?: React.ReactNode }> = ({
+const Punchy: React.FC<{ src: string; punches: number[]; drift: number; startFrom?: number; children?: React.ReactNode }> = ({
   src,
+  startFrom = 0,
   punches,
   drift,
   children,
@@ -31,7 +34,7 @@ const Punchy: React.FC<{ src: string; punches: number[]; drift: number; children
   }, 0);
   return (
     <AbsoluteFill style={{ transform: `scale(${base + punch})` }}>
-      <OffthreadVideo src={staticFile(src)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      <OffthreadVideo src={staticFile(src)} startFrom={startFrom} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       {children}
     </AbsoluteFill>
   );
@@ -41,27 +44,9 @@ const Title: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const lines = ["DIA 3", "CRIANDO SITES PARA MARCAS", "ATÉ SER CONTRATADO"];
-  const out = interpolate(frame, [84, 96], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const out = interpolate(frame, [110, 125], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
-    <AbsoluteFill style={{ justifyContent: "flex-start", alignItems: "center", paddingTop: 480, opacity: out }}>
-      {/* blurred copy of the clip hides the caption burned into the source */}
-      <div
-        style={{
-          position: "absolute",
-          top: 440,
-          left: 0,
-          right: 0,
-          height: 300,
-          overflow: "hidden",
-          maskImage: "linear-gradient(transparent, #000 18%, #000 82%, transparent)",
-        }}
-      >
-        <OffthreadVideo
-          src={staticFile("remotion/a.mp4")}
-          muted
-          style={{ position: "absolute", top: -440, width: "100%", height: 1920, objectFit: "cover", filter: "blur(36px) brightness(0.8)" }}
-        />
-      </div>
+    <AbsoluteFill style={{ justifyContent: "flex-start", alignItems: "center", paddingTop: 420, opacity: out }}>
       {lines.map((t, i) => {
         const s = spring({ frame: frame - 3 - i * 5, fps, config: { damping: 14, stiffness: 160 } });
         return (
@@ -91,24 +76,29 @@ const Title: React.FC = () => {
 
 export const Vlog: React.FC = () => {
   const frame = useCurrentFrame();
-  const flashAt = A_FRAMES - FLASH;
-  const flash = interpolate(frame, [flashAt - 2, flashAt + FLASH / 2, flashAt + FLASH + 4], [0, 0.9, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
+  const aStart = OPEN_FRAMES - FLASH;
+  const bStart = aStart + A_FRAMES - FLASH;
+  const flashAt = (f: number) =>
+    interpolate(frame, [f - 2, f + FLASH / 2, f + FLASH + 4], [0, 0.9, 0], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
+  const flash = Math.max(flashAt(aStart), flashAt(bStart));
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
-      <Sequence durationInFrames={A_FRAMES}>
-        <Punchy src="remotion/a.mp4" punches={[90, 150, 240, 330, 400]} drift={0.05}>
-          <Sequence durationInFrames={100}>
+      <Sequence durationInFrames={OPEN_FRAMES}>
+        <Punchy src="remotion/open.mp4" punches={[40, 90]} drift={0.04}>
+          <Sequence durationInFrames={OPEN_FRAMES}>
             <Title />
           </Sequence>
         </Punchy>
       </Sequence>
-      <Sequence from={A_FRAMES - FLASH} durationInFrames={B_FRAMES}>
+      <Sequence from={aStart} durationInFrames={A_FRAMES}>
+        <Punchy src="remotion/a.mp4" startFrom={A_CUT} punches={[0, 60, 150, 240, 310]} drift={0.05} />
+      </Sequence>
+      <Sequence from={bStart} durationInFrames={B_FRAMES}>
         <Punchy src="remotion/b.mp4" punches={[0, 100, 190, 290, 390]} drift={0.06} />
       </Sequence>
-      {/* cut flash + vignette */}
       <AbsoluteFill style={{ backgroundColor: "#fff", opacity: flash }} />
       <AbsoluteFill style={{ background: "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45))" }} />
     </AbsoluteFill>
