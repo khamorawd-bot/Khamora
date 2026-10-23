@@ -11,7 +11,7 @@ import {
 } from "remotion";
 
 export const FPS = 30;
-export const OPEN_FRAMES = 145;
+export const OPEN_FRAMES = 115;
 export const A_CUT = 90; // first 3s of a.mp4 is the old brown-shirt intro
 export const A_FRAMES = 475 - A_CUT;
 export const B_FRAMES = 499;
@@ -44,7 +44,7 @@ const Title: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const lines = ["DIA 3", "CRIANDO SITES PARA MARCAS", "ATÉ SER CONTRATADO"];
-  const out = interpolate(frame, [110, 125], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const out = interpolate(frame, [85, 100], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ justifyContent: "flex-start", alignItems: "center", paddingTop: 420, opacity: out }}>
       {lines.map((t, i) => {
@@ -87,17 +87,17 @@ export const Vlog: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       <Sequence durationInFrames={OPEN_FRAMES}>
-        <Punchy src="remotion/open.mp4" punches={[40, 90]} drift={0.04}>
+        <Punchy src="remotion/open.mp4" punches={[]} drift={0.04}>
           <Sequence durationInFrames={OPEN_FRAMES}>
             <Title />
           </Sequence>
         </Punchy>
       </Sequence>
       <Sequence from={aStart} durationInFrames={A_FRAMES}>
-        <Punchy src="remotion/a.mp4" startFrom={A_CUT} punches={[0, 60, 150, 240, 310]} drift={0.05} />
+        <Punchy src="remotion/a.mp4" startFrom={A_CUT} punches={[]} drift={0.05} />
       </Sequence>
       <Sequence from={bStart} durationInFrames={B_FRAMES}>
-        <Punchy src="remotion/b.mp4" punches={[0, 100, 190, 290, 390]} drift={0.06} />
+        <Punchy src="remotion/b.mp4" punches={[]} drift={0.06} />
       </Sequence>
       <AbsoluteFill style={{ backgroundColor: "#fff", opacity: flash }} />
       <AbsoluteFill style={{ background: "radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45))" }} />
