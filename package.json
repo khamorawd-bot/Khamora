@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "tsc --noEmit",
     "remotion:studio": "remotion studio remotion/index.ts",
+    "remotion:render:vlog": "remotion render remotion/index.ts Vlog out/vlog.mp4",
     "remotion:render": "remotion render remotion/index.ts HelloWorld out/hello.mp4",
     "cf:types": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "cf:build": "opennextjs-cloudflare build",
