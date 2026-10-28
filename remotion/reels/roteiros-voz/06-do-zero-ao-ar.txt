@@ -1,0 +1,29 @@
+REEL 06: Do zero ao ar em 60 segundos
+Duração do vídeo: 18.5 s | Palavra do comentário: COMEÇAR
+Observação: Tom: ritmo crescente, mais energia no “no ar!”.
+
+--- TEXTO PARA A VOZ (cole isto) ---
+
+Acha que fazer um site é complicado? Veja.
+
+Passo um: a conversa.
+
+Dois: o layout.
+
+Três: o desenvolvimento.
+
+Quatro: no ar!
+
+Conversa, layout, desenvolvimento, no ar.
+
+Comente começar.
+
+--- GUIA DE TEMPO (não colar) ---
+
+     0:00–0:02  Acha que fazer um site é complicado? Veja.
+     0:02–0:05  Passo um: a conversa.
+     0:05–0:08  Dois: o layout.
+     0:08–0:11  Três: o desenvolvimento.
+     0:11–0:14  Quatro: no ar!
+     0:14–0:16  Conversa, layout, desenvolvimento, no ar.
+   0:16–0:18,5  Comente começar.

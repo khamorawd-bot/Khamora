@@ -1,0 +1,35 @@
+REEL 01: Quanto custa um site?
+Duração do vídeo: 18 s | Palavra do comentário: PREÇO
+Observação: Os valores são exemplo: se mudar no vídeo, mude aqui.
+
+--- TEXTO PARA A VOZ (cole isto) ---
+
+Quanto custa um site?
+
+Simples: de oitocentos a dois mil reais.
+
+Um cartão de visita online.
+
+Médio: de dois mil a cinco mil reais.
+
+Páginas, WhatsApp e Google.
+
+Completo: a partir de cinco mil reais.
+
+Um site que vende sozinho.
+
+Comente preço.
+
+E eu te mando a tabela.
+
+--- GUIA DE TEMPO (não colar) ---
+
+     0:00–0:02  Quanto custa um site?
+     0:02–0:04  Simples: de oitocentos a dois mil reais.
+     0:04–0:06  Um cartão de visita online.
+     0:06–0:08  Médio: de dois mil a cinco mil reais.
+     0:08–0:10  Páginas, WhatsApp e Google.
+     0:10–0:12  Completo: a partir de cinco mil reais.
+     0:12–0:14  Um site que vende sozinho.
+     0:14–0:16  Comente preço.
+     0:16–0:18  E eu te mando a tabela.

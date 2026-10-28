@@ -1,0 +1,38 @@
+REEL 10: Antes e depois de um negócio local
+Duração do vídeo: 19 s | Palavra do comentário: QUERO
+Observação: Este é um exemplo ilustrativo, não um caso real: mantenha o aviso.
+
+--- TEXTO PARA A VOZ (cole isto) ---
+
+Antes e depois de um negócio local.
+
+Antes.
+
+Cinco pedidos por semana, todos por indicação.
+
+Sempre os mesmos clientes.
+
+Mesmo negócio. Agora com site.
+
+Depois.
+
+O Google traz clientes novos.
+
+E o negócio cresce.
+
+Exemplo ilustrativo.
+
+Quer isso? Comente quero.
+
+--- GUIA DE TEMPO (não colar) ---
+
+     0:00–0:02  Antes e depois de um negócio local.
+   0:02–0:03,5  Antes.
+ 0:03,5–0:05,5  Cinco pedidos por semana, todos por indicação.
+ 0:05,5–0:07,5  Sempre os mesmos clientes.
+ 0:07,5–0:09,5  Mesmo negócio. Agora com site.
+   0:09,5–0:11  Depois.
+     0:11–0:13  O Google traz clientes novos.
+     0:13–0:15  E o negócio cresce.
+   0:15–0:16,5  Exemplo ilustrativo.
+   0:16,5–0:19  Quer isso? Comente quero.
