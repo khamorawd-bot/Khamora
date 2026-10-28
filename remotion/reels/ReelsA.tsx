@@ -1,4 +1,4 @@
-import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Easing, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { B, C, Card, CtaWord, FONT, O, Pop, Reel, Rise, Shake, Signature, SfxEvent, T, f, timeline, useBeat, useCount, useSp, Browser, HouseIcon } from "./kit";
 
 // =====================================================================
@@ -101,7 +101,9 @@ export const Reel1: React.FC = () => {
 // =====================================================================
 // 2. Procure seu negócio no Google
 // =====================================================================
-export const tl2 = timeline([2, 2, 2, 2, 2, 2, 2, 2, 2.5]);
+// Reel 2 sincronizado com a narração (voz acelerada em 1,10x): tempos medidos no áudio original e divididos por 1,10
+const K2 = 1 / 1.1;
+export const tl2 = timeline([2.15, 2.15, 1.7, 1.85, 2.65, 2.5, 1.3, 1.7, 1.7, 2.0, 1.4, 1.4, 1.8, 2.0, 2.3, 1.6, 1.65, 2.15, 2.1, 1.2, 1.4, 1.5, 2.3].map((d) => +(d * K2).toFixed(3)));
 
 const SearchBar: React.FC<{ chars?: number; text: string; pulse?: boolean; width?: number }> = ({ chars, text, pulse, width = 900 }) => {
   const frame = useCurrentFrame();
@@ -170,50 +172,80 @@ const Columns: React.FC<{ focus?: "left" | "right" | "both"; drop?: boolean; off
 export const Reel2: React.FC = () => {
   const S = tl2.S;
   const sfx: SfxEvent[] = [
-    [0.02, "typing", 0.45],
-    [S[1] + 0.05, "typing", 0.5], [S[1] + 1.65, "click", 0.6],
-    [S[2] + 0.15, "swipe", 0.35], [S[2] + 0.45, "error", 0.45], [S[2] + 1.0, "ding", 0.55],
-    [S[3], "pop", 0.5], [S[3] + 0.8, "error", 0.35],
-    [S[4], "pop", 0.5],
-    [S[5], "pop", 0.5], [S[6] + 0.2, "pop2", 0.5], [S[6] + 0.5, "pop2", 0.5], [S[6] + 0.8, "pop2", 0.5], [S[6] + 1.1, "ding", 0.6],
-    [S[7], "whoosh", 0.4], [S[8], "pop", 0.5], [S[8] + 0.3, "ding", 0.6],
+    [0.02, "pop", 0.45],
+    [S[1], "whoosh", 0.3], [S[1] + 0.2, "typing", 0.3],
+    [S[2] + 0.05, "typing", 0.3], [S[3] + 0.1, "typing", 0.3], [S[3] + 1.1, "click", 0.45],
+    [S[4], "pop", 0.4],
+    [S[5] + 0.15, "swipe", 0.3], [S[5] + 0.45, "error", 0.35], [S[5] + 0.95, "ding", 0.45],
+    [S[6], "pop", 0.4], [S[7], "pop", 0.4], [S[7] + 0.6, "error", 0.3], [S[8], "pop", 0.4], [S[9], "pop", 0.4], [S[10], "pop", 0.4], [S[11], "pop", 0.4],
+    [S[12], "whoosh", 0.3], [S[13] + 0.1, "pop2", 0.4], [S[13] + 0.4, "pop2", 0.4], [S[13] + 0.7, "pop2", 0.4], [S[13] + 1.0, "ding", 0.45],
+    [S[14], "pop", 0.4], [S[15], "pop", 0.4], [S[16] + 0.1, "click", 0.45], [S[16] + 0.3, "ding", 0.45],
+    [S[17], "pop", 0.4], [S[18], "pop", 0.4], [S[18] + 1.1, "thud", 0.5],
+    [S[19], "swipe", 0.3], [S[20], "magnet", 0.4], [S[21], "pop", 0.45], [S[21] + 0.25, "ding", 0.5], [S[22], "pop", 0.4], [S[22] + 0.3, "ding", 0.5],
   ];
   const Chip: React.FC<{ t: string; d: number }> = ({ t, d }) => (
-    <Pop delay={d}><div style={{ background: C.orange, borderRadius: 40, padding: "14px 40px" }}><T size={58} color={C.bg}>{t}</T></div></Pop>
+    <Pop delay={d}><div style={{ background: C.orange, borderRadius: 40, padding: "14px 40px" }}><T size={62} color={C.bg}>{t}</T></div></Pop>
   );
+  const Chameleon: React.FC = () => {
+    const frame = useCurrentFrame();
+    return (
+      <Pop now>
+        <img src={staticFile("remotion/brand/simbolo-laranja.png")} style={{ height: 230, filter: `hue-rotate(${Math.sin(frame / 7) * 120}deg) saturate(${1.2 + Math.sin(frame / 5) * 0.4})`, opacity: 0.55 + 0.45 * Math.abs(Math.sin(frame / 9)) }} />
+      </Pop>
+    );
+  };
   return (
-    <Reel music="r2" sfx={sfx}>
-      <B tl={tl2} i={0}>
-        <Rise now from={60}><T size={130}>Procure seu negócio no <O>Google.</O></T></Rise>
-        <div style={{ marginTop: 110 }}><TypeBar start={0} dur={50} /></div>
-      </B>
+    <Reel music="r2" musicVol={0.3} voice="voz2" sfx={sfx}>
+      <B tl={tl2} i={0}><Rise now from={240}><T size={140}>Pare o que você está <O>fazendo agora.</O></T></Rise></B>
       <B tl={tl2} i={1}>
-        <TypeBar start={3} dur={42} pulse width={920} />
-        <Rise delay={30} style={{ marginTop: 50 }}><T size={70} color={C.mute}>buscando…</T></Rise>
+        <Rise now from={60}><T size={120}>Procure seu negócio no <O>Google.</O></T></Rise>
+        <div style={{ marginTop: 100 }}><TypeBar start={999} dur={1} /></div>
       </B>
       <B tl={tl2} i={2}>
-        <Rise delay={0}><T size={80} style={{ marginBottom: 50 }}>Mesma busca. <O>Dois resultados.</O></T></Rise>
-        <Columns />
+        <Rise now from={80}><T size={96} style={{ marginBottom: 60 }}>Digite o que o seu cliente <O>digitaria</O></T></Rise>
+        <TypeBar start={2} dur={34} pulse width={920} />
       </B>
       <B tl={tl2} i={3}>
-        <Rise now from={200}><T size={104}><span style={{ color: C.mute }}>Sem site:</span> só um <O>perfil perdido.</O></T></Rise>
+        <Rise now from={80}><T size={96} style={{ marginBottom: 60 }}>para encontrar <O>seu serviço.</O></T></Rise>
+        <TypeBar start={0} dur={1} pulse width={920} />
       </B>
-      <B tl={tl2} i={4}>
-        <Shake at={20}><Columns focus="left" drop={false} /></Shake>
-        <Rise delay={6} style={{ marginTop: 60 }}><T size={64} color={C.mute}>Ninguém sabe se está aberto.</T></Rise>
-      </B>
+      <B tl={tl2} i={4}><Rise now from={160}><T size={118}>Veja a <O>diferença</O> na mesma busca.</T></Rise><Rise delay={14} style={{ marginTop: 50 }}><T size={64} color={C.mute}>buscando…</T></Rise></B>
       <B tl={tl2} i={5}>
-        <Rise now from={200}><T size={104}><O>Com site:</O> horário, fotos, botão do WhatsApp.</T></Rise>
+        <Rise delay={0}><T size={78} style={{ marginBottom: 50 }}>Dois resultados <O>totalmente diferentes.</O></T></Rise>
+        <Columns />
       </B>
-      <B tl={tl2} i={6}>
+      <B tl={tl2} i={6}><Rise now from={180}><T size={160} color={C.mute}>Sem site:</T></Rise></B>
+      <B tl={tl2} i={7}>
+        <Rise now from={120}><T size={104}>Só um <O>perfil perdido.</O></T></Rise>
+        <Shake at={14}><div style={{ marginTop: 50 }}><Columns focus="left" drop={false} /></div></Shake>
+      </B>
+      <B tl={tl2} i={8}><Rise now from={160}><T size={116}>Ninguém sabe se está <O>aberto.</O></T></Rise></B>
+      <B tl={tl2} i={9}><Rise now from={160}><T size={116}>Pouca informação. <O>Nenhuma história.</O></T></Rise></B>
+      <B tl={tl2} i={10}><Rise now from={160}><T size={120}>Ainda precisa <O>procurar</O></T></Rise></B>
+      <B tl={tl2} i={11}><Rise now from={160}><T size={120}>no <O>Instagram</O> depois.</T></Rise></B>
+      <B tl={tl2} i={12}><Rise now from={160}><T size={140}><O>Com site,</O> o cliente vê</T></Rise></B>
+      <B tl={tl2} i={13}>
         <div style={{ display: "flex", flexDirection: "column", gap: 28, alignItems: "center" }}>
-          <Chip t="Horário" d={6} /><Chip t="Fotos" d={16} /><Chip t="Botão do WhatsApp" d={26} />
+          <Chip t="Horários" d={4} /><Chip t="Fotos" d={13} /><Chip t="WhatsApp" d={22} />
         </div>
       </B>
-      <B tl={tl2} i={7}>
-        <Rise now from={200}><T size={130}>Quem aparece melhor, <O>vende.</O></T></Rise>
+      <B tl={tl2} i={14}>
+        <Rise now from={140}><T size={118}>Sua <O>história.</O></T></Rise>
+        <Rise delay={16} style={{ marginTop: 24 }}><T size={118}>E se conecta <O>com você.</O></T></Rise>
       </B>
-      <B tl={tl2} i={8}><CtaWord word="SITE" /><Signature /></B>
+      <B tl={tl2} i={15}><Rise now from={160}><T size={116}>Chama o cliente para uma <O>ação.</O></T></Rise></B>
+      <B tl={tl2} i={16}>
+        <Pop now><div style={{ background: C.orange, borderRadius: 60, padding: "40px 90px" }}><T size={96} color={C.bg}>Fale no WhatsApp</T></div></Pop>
+      </B>
+      <B tl={tl2} i={17}><Rise now from={160}><T size={120}>Tem <O>tudo</O> o que o cliente precisa.</T></Rise></B>
+      <B tl={tl2} i={18}>
+        <Rise now from={160}><T size={130}>Quem aparece melhor,</T></Rise>
+        <Pop delay={22} style={{ marginTop: 10 }}><T size={210} color={C.orange} style={{ letterSpacing: -5 }}>vende!</T></Pop>
+      </B>
+      <B tl={tl2} i={19}><Rise now from={160}><T size={120}>A <O>Khamora</O> vem</T></Rise><Signature delay={2} /></B>
+      <B tl={tl2} i={20}><Chameleon /><Rise delay={4} style={{ marginTop: 40 }}><T size={104}>tirar a <O>camuflagem</O> da sua marca.</T></Rise></B>
+      <B tl={tl2} i={21}><CtaWord word="SITE" /></B>
+      <B tl={tl2} i={22}><Rise now from={160}><T size={104}>e dá uma olhada <O>na sua DM.</O></T></Rise><Signature /></B>
     </Reel>
   );
 };
