@@ -1,0 +1,27 @@
+REELS #5 (PRECO26) - ROTEIRO DE NARRACAO
+Duracao alvo: ~36 segundos. Tom: direto, confiante, ritmo de conversa. Faca uma pausa curta entre os blocos.
+Dica: grave cada bloco em uma linha/arquivo separado se puder; fica mais facil encaixar nas cenas.
+
+--- TEXTO PARA LER / COLAR NA IA DE VOZ ---
+
+[1] Voce cobra barato porque nao sabe o seu custo?
+
+[2] Faz essa conta em tres passos.
+
+[3] Passo um: some tudo que voce paga todo mes, mesmo sem vender nada.
+
+[4] Passo dois: defina quanto voce quer receber.
+
+[5] Passo tres: conte so as horas em que voce realmente produz. Nao sao as cento e sessenta do mes.
+
+[6] Mil e quinhentos, mais quatro mil, dividido por cem horas. Da cinquenta e cinco reais por hora. Esse e o seu valor minimo.
+
+[7] Um projeto de vinte horas? Mil e cem reais. Cobrou menos que isso, voce esta pagando pra trabalhar.
+
+[8] Quer o guia completo? Use o codigo PRECO vinte e seis no link da bio.
+
+--- OBSERVACOES ---
+- Os valores (1.500, 4.000 e 100 horas) sao EXEMPLO. Se trocar os numeros no video, troque aqui tambem.
+- Se a IA de voz pronunciar mal "PRECO26", escreva "PRECO vinte e seis".
+- Duracao por bloco (guia): 1 = 3s | 2 = 2s | 3 = 4s | 4 = 4s | 5 = 5s | 6 = 7s | 7 = 5s | 8 = 5s
+- Me mande o audio (um arquivo ou um por bloco) que eu sincronizo as cenas com a sua voz.
