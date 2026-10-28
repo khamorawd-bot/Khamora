@@ -192,9 +192,10 @@ export const Sfx: React.FC<{ at: number; name: string; volume?: number }> = ({ a
   </Sequence>
 );
 
-export const Reel: React.FC<{ music: string; musicVol?: number; sfx: SfxEvent[]; children: React.ReactNode }> = ({
+export const Reel: React.FC<{ music: string; musicVol?: number; voice?: string; sfx: SfxEvent[]; children: React.ReactNode }> = ({
   music,
   musicVol = 0.55,
+  voice,
   sfx,
   children,
 }) => {
@@ -203,6 +204,7 @@ export const Reel: React.FC<{ music: string; musicVol?: number; sfx: SfxEvent[];
     <AbsoluteFill style={{ backgroundColor: C.bg }}>
       {children}
       <Audio src={staticFile(`remotion/reels/audio/${music}.mp3`)} volume={musicVol} />
+      {voice && <Audio src={staticFile(`remotion/reels/audio/${voice}.mp3`)} volume={1} />}
       {sfx.map(([at, name, v], k) => (
         <Sfx key={k} at={at} name={name} volume={v} />
       ))}

@@ -2,54 +2,96 @@ import { AbsoluteFill, Easing, interpolate, useCurrentFrame } from "remotion";
 import { B, C, Card, CtaWord, FONT, O, Pop, Reel, Rise, Shake, Signature, SfxEvent, T, f, timeline, useBeat, useCount, useSp, Browser, HouseIcon } from "./kit";
 
 // =====================================================================
-// 1. Quanto custa um site?
+// 1. Quanto custa um site?  (sincronizado com a narração: ~44 s)
 // =====================================================================
-export const tl1 = timeline([2, 2, 2, 2, 2, 2, 2, 2, 2]);
+export const tl1 = timeline([2.55, 1.65, 1.8, 1.85, 1.7, 1.85, 1.3, 2.2, 1.3, 1.5, 1.7, 2.7, 2.7, 1.6, 2.5, 2.1, 1.45, 1.15, 1.4, 1.4, 1.6, 2.5, 1.4, 2.1]);
 const brl = (n: number) => n.toLocaleString("pt-BR");
 
-const Tier: React.FC<{ name: string; a: number; b?: number; plus?: boolean }> = ({ name, a, b, plus }) => {
-  const ca = useCount(a, 6, 28);
-  const cb = useCount(b ?? 0, 6, 28);
+const Label1: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Rise delay={0}><T size={64} color={C.orange} style={{ letterSpacing: 8 }}>{children}</T></Rise>
+);
+const Money: React.FC<{ label: string; prefix?: string; to: number; plus?: boolean; size?: number }> = ({ label, prefix = "", to, plus, size = 190 }) => {
+  const n = useCount(to, 5, 24);
   return (
     <>
-      <Rise delay={0}><T size={64} color={C.orange} style={{ letterSpacing: 8 }}>{name}</T></Rise>
-      <Rise delay={3} style={{ marginTop: 30 }}><T size={170} style={{ letterSpacing: -5 }}>R$ {brl(ca)}{plus ? "+" : ""}</T></Rise>
-      {b !== undefined && (
-        <Rise delay={6} style={{ marginTop: 6 }}><T size={110} weight={600} color={C.orange2}>a R$ {brl(cb)}</T></Rise>
-      )}
+      <Label1>{label}</Label1>
+      <Rise delay={3} style={{ marginTop: 34 }}><T size={size} style={{ letterSpacing: -5 }}>{prefix}R$ {brl(n)}{plus ? "+" : ""}</T></Rise>
     </>
   );
 };
-const Desc: React.FC<{ tier: string; children: React.ReactNode }> = ({ tier, children }) => (
+const Cnt: React.FC<{ to: number; start?: number; dur?: number; prefix?: string; suffix?: string }> = ({ to, start = 4, dur = 26, prefix = "", suffix = "" }) => {
+  const n = useCount(to, start, dur);
+  return <>{prefix}{brl(n)}{suffix}</>;
+};
+const Phrase: React.FC<{ tier?: string; children: React.ReactNode; size?: number }> = ({ tier, children, size = 120 }) => (
   <>
-    <Rise delay={0}><T size={56} color={C.orange} style={{ letterSpacing: 8 }}>{tier}</T></Rise>
-    <Rise delay={3} style={{ marginTop: 40 }}><T size={112}>{children}</T></Rise>
+    {tier && <Rise delay={0}><T size={52} color={C.orange} style={{ letterSpacing: 8, marginBottom: 36 }}>{tier}</T></Rise>}
+    <Rise delay={tier ? 3 : 0} now={!tier}><T size={size}>{children}</T></Rise>
   </>
 );
+const MapPin: React.FC<{ lift?: boolean }> = ({ lift }) => {
+  const frame = useCurrentFrame();
+  const y = lift ? interpolate(frame, [0, 40], [90, -40], { extrapolateRight: "clamp", easing: Easing.out(Easing.cubic) }) : 0;
+  return (
+    <div style={{ transform: `translateY(${y}px)` }}>
+      <Pop now><svg width="230" height="290" viewBox="0 0 100 126"><path d="M50 4C26 4 10 22 10 44c0 28 40 76 40 76s40-48 40-76C90 22 74 4 50 4z" fill={C.orange} /><circle cx="50" cy="44" r="15" fill={C.bg} /></svg></Pop>
+    </div>
+  );
+};
+const Gear: React.FC = () => {
+  const frame = useCurrentFrame();
+  return (
+    <svg width="220" height="220" viewBox="0 0 100 100" style={{ transform: `rotate(${frame * 6}deg)` }}>
+      {Array.from({ length: 8 }).map((_, k) => <rect key={k} x="44" y="4" width="12" height="20" rx="3" fill={C.orange} transform={`rotate(${k * 45} 50 50)`} />)}
+      <circle cx="50" cy="50" r="30" fill={C.orange} /><circle cx="50" cy="50" r="12" fill={C.bg} />
+    </svg>
+  );
+};
 
 export const Reel1: React.FC = () => {
   const S = tl1.S;
   const sfx: SfxEvent[] = [
-    [0.02, "pop", 0.6],
-    [S[1], "whoosh", 0.4], [S[1] + 0.2, "count", 0.35], [S[2] + 0.1, "pop", 0.5],
-    [S[3], "whoosh", 0.4], [S[3] + 0.2, "count", 0.35], [S[4] + 0.1, "pop", 0.5],
-    [S[5], "whoosh", 0.4], [S[5] + 0.2, "count", 0.35], [S[6] + 0.1, "pop", 0.5],
-    [S[7], "swipe", 0.4], [S[7] + 0.25, "thud", 0.6], [S[8], "pop", 0.5], [S[8] + 0.3, "ding", 0.6],
+    [0.02, "pop", 0.45],
+    [S[1], "whoosh", 0.3], [S[1] + 0.2, "count", 0.3], [S[2] + 0.1, "count", 0.3], [S[3], "pop", 0.4], [S[4], "pop", 0.4], [S[5], "pop", 0.4], [S[6], "pop", 0.4],
+    [S[7], "whoosh", 0.3], [S[7] + 0.2, "count", 0.3], [S[8] + 0.1, "count", 0.3], [S[9], "pop", 0.4], [S[10], "pop2", 0.4], [S[10] + 0.5, "pop2", 0.4],
+    [S[11], "pop", 0.4], [S[11] + 0.4, "pop3", 0.4], [S[12], "swipe", 0.3], [S[12] + 0.6, "ding", 0.4],
+    [S[13], "whoosh", 0.3], [S[14] + 0.1, "count", 0.3], [S[14] + 1.5, "ding", 0.45],
+    [S[15], "pop", 0.4], [S[16], "pop", 0.4], [S[17], "snap", 0.5], [S[18], "pop", 0.4], [S[19], "pop", 0.4],
+    [S[20], "swipe", 0.3], [S[20] + 0.4, "ding", 0.4], [S[21], "pop", 0.4], [S[22], "pop", 0.45], [S[22] + 0.25, "thud", 0.45], [S[23], "pop", 0.4], [S[23] + 0.3, "ding", 0.5],
   ];
   return (
-    <Reel music="r1" sfx={sfx}>
-      <B tl={tl1} i={0}>
-        <Rise now from={260}><T size={150}>Quanto custa um <O>site?</O></T></Rise>
+    <Reel music="r1" musicVol={0.3} voice="voz1" sfx={sfx}>
+      <B tl={tl1} i={0}><Rise now from={260}><T size={140}>Quanto custa um <O>site</O> hoje em dia?</T></Rise></B>
+      <B tl={tl1} i={1}><Money label="SIMPLES" to={800} /></B>
+      <B tl={tl1} i={2}><Label1>SIMPLES</Label1><Rise delay={3} style={{ marginTop: 34 }}><T size={150} color={C.orange2} style={{ letterSpacing: -4 }}><Cnt prefix="a R$ " to={2000} /></T></Rise></B>
+      <B tl={tl1} i={3}><Phrase tier="SIMPLES">Cartão de visita <O>online.</O></Phrase></B>
+      <B tl={tl1} i={4}><Phrase tier="SIMPLES">Para <O>profissionais liberais.</O></Phrase></B>
+      <B tl={tl1} i={5}><Phrase tier="SIMPLES">Uma página <O>única.</O></Phrase></B>
+      <B tl={tl1} i={6}><Phrase tier="SIMPLES">Tipo o <O>link da bio.</O></Phrase></B>
+      <B tl={tl1} i={7}><Money label="MÉDIO" to={2000} /></B>
+      <B tl={tl1} i={8}><Label1>MÉDIO</Label1><Rise delay={3} style={{ marginTop: 34 }}><T size={150} color={C.orange2} style={{ letterSpacing: -4 }}><Cnt prefix="a R$ " to={5000} /></T></Rise></B>
+      <B tl={tl1} i={9}><Phrase tier="MÉDIO">Páginas.</Phrase></B>
+      <B tl={tl1} i={10}>
+        <Phrase tier="MÉDIO" size={100}>Integração com</Phrase>
+        <div style={{ display: "flex", gap: 24, marginTop: 40 }}>
+          <Pop delay={8}><div style={{ background: C.orange, borderRadius: 40, padding: "14px 40px" }}><T size={72} color={C.bg}>WhatsApp</T></div></Pop>
+          <Pop delay={16}><div style={{ background: C.orange, borderRadius: 40, padding: "14px 40px" }}><T size={72} color={C.bg}>Google</T></div></Pop>
+        </div>
       </B>
-      <B tl={tl1} i={1}><Tier name="SIMPLES" a={800} b={2000} /></B>
-      <B tl={tl1} i={2}><Desc tier="SIMPLES">Cartão de visita <O>online.</O></Desc></B>
-      <B tl={tl1} i={3}><Tier name="MÉDIO" a={2000} b={5000} /></B>
-      <B tl={tl1} i={4}><Desc tier="MÉDIO">Páginas, <O>WhatsApp,</O> Google.</Desc></B>
-      <B tl={tl1} i={5}><Tier name="COMPLETO" a={5000} plus /></B>
-      <B tl={tl1} i={6}><Desc tier="COMPLETO">Vende <O>sozinho.</O></Desc></B>
-      <B tl={tl1} i={7}><CtaWord word="PREÇO" /></B>
-      <B tl={tl1} i={8}>
-        <Rise><T size={100}>e eu mando a <O>tabela.</O></T></Rise>
+      <B tl={tl1} i={11}><MapPin /><Rise delay={6} style={{ marginTop: 40 }}><T size={104}>Para empresas locais que querem <O>ser vistas.</O></T></Rise></B>
+      <B tl={tl1} i={12}><MapPin lift /><Rise delay={4} style={{ marginTop: 40 }}><T size={104}>Mais valor.<br /><O>Melhor posição</O> no mapa.</T></Rise></B>
+      <B tl={tl1} i={13}><Label1>COMPLETO</Label1><Rise delay={4} style={{ marginTop: 34 }}><T size={140}>Um site <O>completo.</O></T></Rise></B>
+      <B tl={tl1} i={14}><Label1>COMPLETO</Label1><Rise delay={3} style={{ marginTop: 34 }}><T size={80} weight={600} color={C.mute}>a partir de</T></Rise><Rise delay={5}><T size={190} style={{ letterSpacing: -5 }}><Cnt prefix="R$ " to={5000} start={8} dur={28} suffix="+" /></T></Rise></B>
+      <B tl={tl1} i={15}><Rise now from={200}><T size={134}>Aquele que <O>vende sozinho.</O></T></Rise><Rise delay={14} style={{ marginTop: 30 }}><T size={64} weight={500} color={C.mute}>Trabalha por você.</T></Rise></B>
+      <B tl={tl1} i={16}><Rise now from={180}><T size={130}>Estrutura <O>robusta.</O></T></Rise></B>
+      <B tl={tl1} i={17}><Gear /><Rise delay={4} style={{ marginTop: 40 }}><T size={140}><O>Automação.</O></T></Rise></B>
+      <B tl={tl1} i={18}><Rise now from={180}><T size={118}>Páginas de <O>alta conversão.</O></T></Rise></B>
+      <B tl={tl1} i={19}><Rise now from={180}><T size={118}>Prontas para <O>anúncios.</O></T></Rise></B>
+      <B tl={tl1} i={20}><Rise now from={160}><T size={96} weight={600}>O diferencial da</T></Rise><Signature delay={4} /></B>
+      <B tl={tl1} i={21}><Rise now from={200}><T size={104}>Preços que <O>cobrem a concorrência</O> do mercado.</T></Rise></B>
+      <B tl={tl1} i={22}><CtaWord word="PREÇO" /></B>
+      <B tl={tl1} i={23}>
+        <Rise><T size={100}>e eu te mando a nossa <O>tabela.</O></T></Rise>
         <Signature />
       </B>
     </Reel>
