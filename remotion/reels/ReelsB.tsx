@@ -10,11 +10,12 @@ const useGF = (tl: Timeline) => {
 // =====================================================================
 // 6. Do zero ao ar em 60 segundos
 // =====================================================================
-export const tl6 = timeline([2, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2.5]);
+// Reel 6 sincronizado com a narração (~35 s)
+export const tl6 = timeline([2.2, 1.1, 2.1, 2.0, 2.1, 2.0, 2.0, 2.3, 2.1, 2.1, 1.2, 2.5, 1.9, 2.5, 1.5, 1.6, 1.6, 2.15]);
 
 const DayCounter: React.FC = () => {
   const g = useGF(tl6);
-  const day = Math.round(interpolate(g, [f(tl6.S[1]), f(tl6.S[9])], [1, 30], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  const day = Math.round(interpolate(g, [f(tl6.S[2]), f(tl6.S[13])], [1, 30], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
   return (
     <div style={{ position: "absolute", top: 280, left: 0, right: 0, display: "flex", justifyContent: "center" }}>
       <div style={{ background: C.card, border: `3px solid ${C.orange}`, borderRadius: 50, padding: "12px 44px" }}>
@@ -90,45 +91,59 @@ const Live: React.FC = () => (
     <Confetti />
   </>
 );
-const Recap: React.FC = () => (
+const Recap: React.FC<{ from?: number; to?: number }> = ({ from = 0, to = 4 }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: 26, alignItems: "flex-start" }}>
-    {["Conversa.", "Layout.", "Desenvolvimento.", "No ar!"].map((w, k) => (
-      <Rise key={w} now={k === 0} delay={k * 8} from={90}><T size={104} style={{ textAlign: "left" }}><O>{k + 1}.</O> {w}</T></Rise>
-    ))}
+    {["Conversa.", "Layout.", "Desenvolvimento.", "No ar!"].map((w, k) => (k >= from && k < to ? (
+      <Rise key={w} now={k === from} delay={(k - from) * 8} from={90}><T size={104} style={{ textAlign: "left" }}><O>{k + 1}.</O> {w}</T></Rise>
+    ) : null))}
   </div>
+);
+const Cap: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Rise now from={80} style={{ marginBottom: 44 }}><T size={74}>{children}</T></Rise>
 );
 
 export const Reel6: React.FC = () => {
   const S = tl6.S;
   const sfx: SfxEvent[] = [
-    [0.02, "pop", 0.6],
-    [S[1], "pop", 0.5], [S[2], "accel", 0.35], [S[2] + 0.2, "msg", 0.5], [S[2] + 0.55, "msg", 0.5], [S[2] + 0.95, "msg", 0.5],
-    [S[3], "pop", 0.5], [S[4], "accel", 0.35], [S[4] + 0.2, "click", 0.55], [S[4] + 0.5, "click", 0.55], [S[4] + 0.8, "click", 0.55], [S[4] + 1.1, "snap", 0.6],
-    [S[5], "pop", 0.5], [S[6], "accel", 0.35], [S[6] + 0.05, "typing", 0.55],
-    [S[7], "pop", 0.5], [S[8] + 0.05, "boom", 0.7], [S[8] + 0.1, "confetti", 0.6], [S[8] + 0.2, "ding", 0.6],
-    [S[9] + 0.1, "pop", 0.4], [S[9] + 0.5, "pop", 0.4], [S[9] + 0.9, "pop", 0.4], [S[9] + 1.3, "ding", 0.5],
-    [S[10], "pop", 0.5], [S[10] + 0.3, "ding", 0.6],
+    [0.02, "pop", 0.5], [S[1], "pop", 0.45],
+    [S[2], "pop", 0.4], [S[2] + 0.05, "accel", 0.3], [S[3] + 0.2, "msg", 0.5], [S[4] + 0.2, "msg", 0.5],
+    [S[5], "pop", 0.4], [S[6] + 0.2, "click", 0.5], [S[6] + 0.7, "snap", 0.55], [S[7] + 0.3, "click", 0.5], [S[7] + 0.9, "snap", 0.55],
+    [S[8], "pop", 0.4], [S[9] + 0.05, "typing", 0.5], [S[10] + 0.05, "typing", 0.45], [S[11] + 0.6, "ding", 0.45],
+    [S[12], "pop", 0.4], [S[13] + 0.05, "boom", 0.6], [S[13] + 0.1, "confetti", 0.55], [S[13] + 0.25, "ding", 0.55],
+    [S[14], "pop", 0.4], [S[14] + 0.8, "pop", 0.4], [S[15], "pop", 0.4], [S[15] + 0.8, "pop", 0.4],
+    [S[16], "pop", 0.45], [S[16] + 0.25, "ding", 0.5], [S[17], "pop", 0.4],
   ];
   return (
-    <Reel music="r6" sfx={sfx}>
-      <B tl={tl6} i={0}><Rise now from={240}><T size={118}>Acha que fazer um site é <O>complicado?</O> Veja.</T></Rise></B>
-      <B tl={tl6} i={1}><Stage n={1} word="Conversa." /></B>
-      <B tl={tl6} i={2}>
+    <Reel music="r6" musicVol={0.28} voice="voz6" sfx={sfx}>
+      <B tl={tl6} i={0}><Rise now from={240}><T size={118}>Você acha que fazer um site é <O>complicado?</O></T></Rise></B>
+      <B tl={tl6} i={1}><Pop now><T size={190} color={C.orange}>Veja.</T></Pop></B>
+      <B tl={tl6} i={2}><Stage n={1} word="Conversa." /></B>
+      <B tl={tl6} i={3}>
         <div style={{ width: 900, display: "flex", flexDirection: "column", gap: 20 }}>
-          <MiniBubble text="Quero um site pra minha loja." delay={0} />
-          <MiniBubble text="Vamos! O que você vende?" me delay={12} />
-          <MiniBubble text="Fotos, horário e WhatsApp." delay={26} />
+          <MiniBubble text="Vamos alinhar o que você precisa." me delay={4} />
         </div>
         <DayCounter />
       </B>
-      <B tl={tl6} i={3}><Stage n={2} word="Layout." /></B>
-      <B tl={tl6} i={4}><Wire /><DayCounter /></B>
-      <B tl={tl6} i={5}><Stage n={3} word="Desenvolvimento." /></B>
-      <B tl={tl6} i={6}><Code /><DayCounter /></B>
-      <B tl={tl6} i={7}><Stage n={4} word="No ar!" /></B>
-      <B tl={tl6} i={8}><Live /></B>
-      <B tl={tl6} i={9}><Recap /></B>
-      <B tl={tl6} i={10}><CtaWord word="COMEÇAR" /><Signature /></B>
+      <B tl={tl6} i={4}>
+        <div style={{ width: 900, display: "flex", flexDirection: "column", gap: 20 }}>
+          <MiniBubble text="Vamos alinhar o que você precisa." me delay={0} />
+          <MiniBubble text="E como eu posso te ajudar." me delay={8} />
+        </div>
+        <DayCounter />
+      </B>
+      <B tl={tl6} i={5}><Stage n={2} word="Layout." /></B>
+      <B tl={tl6} i={6}><Cap>Como você quer o site?<br /><O>Cores.</O></Cap><Wire /><DayCounter /></B>
+      <B tl={tl6} i={7}><Cap><O>Logos.</O> Fotos.</Cap><Wire /><DayCounter /></B>
+      <B tl={tl6} i={8}><Stage n={3} word="Desenvolvimento." /></B>
+      <B tl={tl6} i={9}><Cap>Aí entra a <O>mão na massa.</O></Cap><Code /><DayCounter /></B>
+      <B tl={tl6} i={10}><Cap>Eu faço o <O>protótipo</O></Cap><Code /><DayCounter /></B>
+      <B tl={tl6} i={11}><Cap>e validamos se precisa <O>alterar algo.</O></Cap><Wire /><DayCounter /></B>
+      <B tl={tl6} i={12}><Stage n={4} word="No ar!" /></B>
+      <B tl={tl6} i={13}><Live /><Rise delay={10} style={{ marginTop: 40 }}><T size={72}>Parabéns, você já tem seu site.</T></Rise></B>
+      <B tl={tl6} i={14}><Recap from={0} to={2} /></B>
+      <B tl={tl6} i={15}><Recap from={2} to={4} /></B>
+      <B tl={tl6} i={16}><CtaWord word="COMEÇAR" /></B>
+      <B tl={tl6} i={17}><Rise now from={160}><T size={100}>e eu te mando mais <O>informações.</O></T></Rise><Signature /></B>
     </Reel>
   );
 };
@@ -136,7 +151,8 @@ export const Reel6: React.FC = () => {
 // =====================================================================
 // 7. 3 mitos sobre site
 // =====================================================================
-export const tl7 = timeline([2, 2, 1.5, 2, 2, 1.5, 2, 2, 1.5, 2, 2.5]);
+// Reel 7 sincronizado com a narração (~21 s)
+export const tl7 = timeline([1.65, 2.55, 2.4, 2.4, 1.5, 1.9, 2.4, 2.1, 2.0, 2.5]);
 
 const Strike: React.FC<{ lines: string[]; p: number; size?: number; color?: string }> = ({ lines, p, size = 110, color = C.white }) => (
   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
@@ -166,22 +182,22 @@ const Stamp: React.FC<{ delay: number }> = ({ delay }) => {
 };
 
 const MYTHS: { myth: string[]; truth: string[] }[] = [
-  { myth: ["Site é para", "empresa grande."], truth: ["Serve para", "qualquer negócio."] },
-  { myth: ["Instagram", "já basta."], truth: ["Ele", "não é seu."] },
-  { myth: ["É", "complicado."], truth: ["Eu faço", "por você."] },
+  { myth: ["Site é só para", "empresa grande."], truth: ["Serve para qualquer", "negócio e tamanho."] },
+  { myth: ["Só ter Instagram", "já basta."], truth: ["Ele não", "é só seu."] },
+  { myth: ["É complicado", "ter um site."], truth: ["Fazemos tudo", "por você."] },
 ];
 
 export const Reel7: React.FC = () => {
   const S = tl7.S;
-  const sfx: SfxEvent[] = [[0.02, "boom", 0.5], [0.05, "pop", 0.6]];
-  MYTHS.forEach((_, q) => {
-    const b = 1 + q * 3;
-    sfx.push([S[b] + 0.05, "pop", 0.5], [S[b + 1] + 0.1, "pen", 0.7], [S[b + 2] + 0.1, "stamp", 0.8], [S[b + 2] + 0.15, "pop", 0.4]);
+  const sfx: SfxEvent[] = [[0.02, "boom", 0.5], [0.05, "pop", 0.5]];
+  [[1, 2], [3, 4], [7, 8]].forEach(([a, t], q) => {
+    const sf = [2.1, 2.2, 1.9][q];
+    sfx.push([S[a] + 0.1, "pop", 0.45], [S[a] + sf, "pen", 0.65], [S[t] + 0.15, "stamp", 0.75], [S[t] + 0.2, "pop", 0.4]);
   });
-  sfx.push([S[10], "pop", 0.5], [S[10] + 0.3, "ding", 0.6]);
-  const MythA: React.FC<{ q: number; strike: boolean }> = ({ q, strike }) => {
+  sfx.push([S[5] + 0.1, "pop", 0.4], [S[6] + 0.1, "pop", 0.4], [S[9], "pop", 0.45], [S[9] + 0.3, "ding", 0.55]);
+  const MythA: React.FC<{ q: number; strikeF: number }> = ({ q, strikeF }) => {
     const frame = useCurrentFrame();
-    const p = strike ? Math.min(1, frame / 12) : 0;
+    const p = Math.min(1, Math.max(0, (frame - strikeF) / 12));
     return (
       <>
         <Rise now from={80}><Label>MITO {q + 1}</Label></Rise>
@@ -189,22 +205,26 @@ export const Reel7: React.FC = () => {
       </>
     );
   };
+  const Truth: React.FC<{ q: number }> = ({ q }) => (
+    <>
+      <div style={{ opacity: 0.4, marginBottom: 40 }}><Strike lines={MYTHS[q].myth} p={1} size={64} /></div>
+      <Rise now from={120}><Label>VERDADE:</Label></Rise>
+      <Rise now from={160}><T size={120}>{MYTHS[q].truth[0]} <O>{MYTHS[q].truth[1]}</O></T></Rise>
+      <Stamp delay={6} />
+    </>
+  );
   return (
-    <Reel music="r7" sfx={sfx}>
+    <Reel music="r7" musicVol={0.28} voice="voz7" sfx={sfx}>
       <B tl={tl7} i={0}><Rise now from={240}><T size={170}><O>3 mitos</O> sobre site.</T></Rise></B>
-      {MYTHS.map((m, q) => (
-        <>
-          <B key={`a${q}`} tl={tl7} i={1 + q * 3}><MythA q={q} strike={false} /></B>
-          <B key={`b${q}`} tl={tl7} i={2 + q * 3}><MythA q={q} strike /></B>
-          <B key={`c${q}`} tl={tl7} i={3 + q * 3}>
-            <div style={{ opacity: 0.4, marginBottom: 40 }}><Strike lines={m.myth} p={1} size={64} /></div>
-            <Rise now from={120}><Label>VERDADE:</Label></Rise>
-            <Rise now from={160}><T size={128}>{m.truth[0]} <O>{m.truth[1]}</O></T></Rise>
-            <Stamp delay={4} />
-          </B>
-        </>
-      ))}
-      <B tl={tl7} i={10}><CtaWord word="MITO" /><Signature /></B>
+      <B tl={tl7} i={1}><MythA q={0} strikeF={f(2.1)} /></B>
+      <B tl={tl7} i={2}><Truth q={0} /></B>
+      <B tl={tl7} i={3}><MythA q={1} strikeF={f(2.2)} /></B>
+      <B tl={tl7} i={4}><Truth q={1} /></B>
+      <B tl={tl7} i={5}><Rise now from={160}><T size={124}>O tempo passa.<br /><O>O algoritmo muda.</O></T></Rise></B>
+      <B tl={tl7} i={6}><Rise now from={160}><T size={112}>Quem não acompanha <O>perde visibilidade.</O></T></Rise></B>
+      <B tl={tl7} i={7}><MythA q={2} strikeF={f(1.9)} /></B>
+      <B tl={tl7} i={8}><Truth q={2} /></B>
+      <B tl={tl7} i={9}><CtaWord word="MITOS" /><Rise delay={18} style={{ marginTop: 30 }}><T size={54} weight={500}>e eu te mando mais informações.</T></Rise><Signature /></B>
     </Reel>
   );
 };
@@ -212,7 +232,8 @@ export const Reel7: React.FC = () => {
 // =====================================================================
 // 8. Quanto tempo você perde no WhatsApp
 // =====================================================================
-export const tl8 = timeline([2, 2, 2, 2, 2, 2, 2, 2, 2.5]);
+// Reel 8 sincronizado com a narração (~21,5 s)
+export const tl8 = timeline([2.4, 2.1, 1.6, 1.9, 1.7, 1.5, 1.8, 2.4, 0.9, 2.1, 1.3, 2.05]);
 
 const Ping: React.FC<{ text: string; delay: number; x: number; y: number }> = ({ text, delay, x, y }) => {
   const s = useSp(delay, 12, 170);
@@ -239,29 +260,30 @@ const BigCount: React.FC<{ to: number; unit: string }> = ({ to, unit }) => {
 export const Reel8: React.FC = () => {
   const S = tl8.S;
   const sfx: SfxEvent[] = [
-    [0.02, "pop", 0.6], [0.3, "msg", 0.45], [0.7, "msg", 0.45], [1.1, "msg", 0.45],
-    [S[1] + 0.1, "msg", 0.5], [S[1] + 0.35, "msg", 0.5], [S[1] + 0.65, "msg", 0.5],
-    [S[2] + 0.1, "msg", 0.5], [S[2] + 0.35, "msg", 0.5], [S[2] + 0.65, "msg", 0.5],
-    [S[3] + 0.1, "msg", 0.5], [S[3] + 0.35, "msg", 0.5], [S[3] + 0.65, "msg", 0.5],
-    [S[4], "count", 0.4], [S[5], "pop", 0.5], [S[6], "boom", 0.5], [S[6] + 0.1, "count", 0.4],
-    [S[7] + 0.15, "relief", 0.65], [S[8], "pop", 0.5], [S[8] + 0.3, "ding", 0.6],
+    [0.02, "pop", 0.5], [0.3, "msg", 0.4], [0.8, "msg", 0.4], [1.3, "msg", 0.4],
+    [S[1] + 0.1, "msg", 0.45], [S[1] + 0.5, "msg", 0.45],
+    [S[2] + 0.1, "msg", 0.45], [S[2] + 0.4, "msg", 0.45], [S[3] + 0.1, "msg", 0.45], [S[3] + 0.4, "msg", 0.45], [S[4] + 0.1, "msg", 0.45], [S[4] + 0.4, "msg", 0.45],
+    [S[5], "count", 0.35], [S[6], "pop", 0.45], [S[7], "boom", 0.45], [S[7] + 0.1, "count", 0.35], [S[8], "pop", 0.4],
+    [S[9] + 0.2, "relief", 0.6], [S[10], "pop", 0.4], [S[11], "pop", 0.45], [S[11] + 0.3, "ding", 0.5],
   ];
-  // tique-taque durante os beats do relógio
-  for (let t = S[5]; t < S[7]; t += 0.5) sfx.push([t, Math.round(t / 0.5) % 2 ? "tick" : "tock", 0.4]);
+  for (let t = S[6]; t < S[9]; t += 0.5) sfx.push([t, Math.round(t / 0.5) % 2 ? "tick" : "tock", 0.35]);
   return (
-    <Reel music="r8" sfx={sfx}>
+    <Reel music="r8" musicVol={0.28} voice="voz8" sfx={sfx}>
       <B tl={tl8} i={0}><Rise now from={240}><T size={118}>Você responde a mesma pergunta <O>20 vezes</O> por dia?</T></Rise></B>
-      <B tl={tl8} i={1}><Question word="Preço." pings={["Quanto custa?", "Qual o valor?", "Tem desconto?"]} /></B>
-      <B tl={tl8} i={2}><Question word="Endereço." pings={["Onde fica?", "Qual o endereço?", "Tem estacionamento?"]} /></B>
-      <B tl={tl8} i={3}><Question word="Horário." pings={["Abre sábado?", "Até que horas?", "Abre feriado?"]} /></B>
-      <B tl={tl8} i={4}><BigCount to={20} unit="perguntas" /></B>
-      <B tl={tl8} i={5}><SpinClock speed={14} /><Rise now from={80} style={{ marginTop: 50 }}><T size={150}><O>×</O> 2 min</T></Rise></B>
-      <B tl={tl8} i={6}><SpinClock speed={34} /><div style={{ marginTop: 40 }}><BigCount to={40} unit="min por dia" /></div></B>
-      <B tl={tl8} i={7}>
+      <B tl={tl8} i={1}><Rise now from={120}><T size={104}>O cliente chega e <O>sempre pergunta:</O></T></Rise></B>
+      <B tl={tl8} i={2}><Question word="Preço?" pings={["Quanto custa?", "Qual o valor?", "Tem desconto?"]} /></B>
+      <B tl={tl8} i={3}><Question word="Endereço?" pings={["Onde fica?", "Qual o endereço?", "Tem estacionamento?"]} /></B>
+      <B tl={tl8} i={4}><Question word="Horário?" pings={["Abre sábado?", "Até que horas?", "Abre feriado?"]} /></B>
+      <B tl={tl8} i={5}><BigCount to={20} unit="perguntas" /></B>
+      <B tl={tl8} i={6}><SpinClock speed={14} /><Rise now from={80} style={{ marginTop: 50 }}><T size={150}><O>×</O> 2 min</T></Rise></B>
+      <B tl={tl8} i={7}><SpinClock speed={34} /><div style={{ marginTop: 40 }}><BigCount to={40} unit="minutos" /></div></B>
+      <B tl={tl8} i={8}><Pop now><T size={170}>por <O>dia.</O></T></Pop></B>
+      <B tl={tl8} i={9}>
         <SpinClock speed={34} stopAt={22} />
-        <Rise delay={14} style={{ marginTop: 50 }}><T size={116}>Um site responde <O>por você.</O></T></Rise>
+        <Rise delay={12} style={{ marginTop: 50 }}><T size={116}>Um site responde <O>por você</O></T></Rise>
       </B>
-      <B tl={tl8} i={8}><CtaWord word="TEMPO" /><Signature /></B>
+      <B tl={tl8} i={10}><Rise now from={160}><T size={118}>e economiza o seu <O>tempo.</O></T></Rise></B>
+      <B tl={tl8} i={11}><CtaWord word="TEMPO" /><Rise delay={18} style={{ marginTop: 30 }}><T size={54} weight={500}>e eu te apresento uma solução.</T></Rise><Signature /></B>
     </Reel>
   );
 };
@@ -269,7 +291,8 @@ export const Reel8: React.FC = () => {
 // =====================================================================
 // 9. Cartão de visita vs site
 // =====================================================================
-export const tl9 = timeline([2, 2, 2, 2, 2, 1.5, 1.5, 2.5, 2.5]);
+// Reel 9 sincronizado com a narração (~14,5 s)
+export const tl9 = timeline([1.6, 0.95, 2.05, 2.1, 1.5, 1.5, 2.0, 1.0, 1.85]);
 
 const BizCard: React.FC<{ scale?: number }> = ({ scale = 1 }) => (
   <div style={{ width: 620 * scale, height: 360 * scale, background: C.warm, borderRadius: 24 * scale, padding: 40 * scale, position: "relative", boxShadow: "0 24px 60px rgba(0,0,0,.4)" }}>
@@ -314,31 +337,33 @@ const Ring: React.FC = () => {
 export const Reel9: React.FC = () => {
   const S = tl9.S;
   const sfx: SfxEvent[] = [
-    [0.02, "pop", 0.6], [0.2, "paper", 0.5],
-    [S[1], "swipe", 0.4], [S[2] + 0.05, "paper", 0.6], [S[2] + 0.6, "pop2", 0.4],
-    [S[3], "swipe", 0.4], [S[4] + 0.05, "magnet", 0.5], [S[4] + 0.3, "pop3", 0.4], [S[4] + 0.6, "pop2", 0.4], [S[4] + 0.9, "pop3", 0.4], [S[4] + 1.2, "pop2", 0.4],
-    [S[5], "pop", 0.5], [S[6], "magnet", 0.5], [S[6] + 0.5, "pop3", 0.45],
-    [S[7], "whoosh", 0.4], [S[7] + 0.4, "pop2", 0.4], [S[8], "pop", 0.5], [S[8] + 0.3, "ding", 0.6],
+    [0.02, "pop", 0.5], [0.2, "paper", 0.4],
+    [S[1], "paper", 0.5], [S[2] + 0.1, "pop2", 0.4],
+    [S[3], "swipe", 0.35], [S[3] + 0.3, "magnet", 0.45], [S[3] + 0.6, "pop3", 0.4], [S[3] + 0.9, "pop2", 0.4], [S[3] + 1.2, "pop3", 0.4],
+    [S[4], "pop", 0.4], [S[5], "pop", 0.35],
+    [S[6], "magnet", 0.45], [S[6] + 0.5, "pop3", 0.4], [S[6] + 1.0, "pop2", 0.4],
+    [S[7], "pop", 0.4], [S[8], "pop", 0.45], [S[8] + 0.3, "ding", 0.5],
   ];
   return (
-    <Reel music="r9" sfx={sfx}>
+    <Reel music="r9" musicVol={0.28} voice="voz9" sfx={sfx}>
       <B tl={tl9} i={0}>
         <Rise now from={60}><T size={130}>Cartão de visita <O>vs</O> site.</T></Rise>
         <div style={{ display: "flex", gap: 30, marginTop: 120, alignItems: "center" }}><BizCard scale={0.7} /><MiniSite scale={0.7} /></div>
       </B>
-      <B tl={tl9} i={1}><Rise now from={200}><T size={112}><span style={{ color: C.mute }}>Cartão de visita:</span> só quem você <O>encontra.</O></T></Rise></B>
+      <B tl={tl9} i={1}><Rise now from={-300}><BizCard /></Rise><Rise delay={8} style={{ marginTop: 50 }}><T size={104}>Cartão de <O>visita:</O></T></Rise></B>
       <B tl={tl9} i={2}>
-        <Rise now from={-300}><BizCard /></Rise>
-        <Rise delay={14} style={{ marginTop: 50 }}><PersonIcon size={120} color={C.mute} /></Rise>
+        <Rise now from={100}><T size={100}>só atinge quem você encontra <O>pessoalmente.</O></T></Rise>
+        <Rise delay={14} style={{ marginTop: 60 }}><PersonIcon size={130} color={C.mute} /></Rise>
       </B>
-      <B tl={tl9} i={3}><Rise now from={200}><T size={118}><O>Site:</O> quem procura <O>você.</O></T></Rise></B>
-      <B tl={tl9} i={4}>
-        <Pop now><MiniSite /></Pop>
-        <Crowd n={9} target={[540, 800]} start={6} />
+      <B tl={tl9} i={3}>
+        <Rise now from={200}><T size={112}><O>Site:</O> serve para quem procura <O>você.</O></T></Rise>
+        <Crowd n={9} target={[540, 1260]} start={10} />
       </B>
-      <B tl={tl9} i={5}><Rise now from={120}><T size={150}>Um <O>espera.</O></T></Rise><div style={{ marginTop: 50, opacity: 0.6 }}><BizCard scale={0.6} /></div></B>
-      <B tl={tl9} i={6}><Rise now from={120}><T size={150}>O outro <O>atrai.</O></T></Rise><div style={{ marginTop: 170, position: "relative" }}><Ring /><MiniSite scale={0.7} /></div></B>
-      <B tl={tl9} i={7}>
+      <B tl={tl9} i={4}><Rise now from={120}><T size={150}>Um <O>espera</O></T></Rise><div style={{ marginTop: 50, opacity: 0.6 }}><BizCard scale={0.6} /></div></B>
+      <B tl={tl9} i={5}><Rise now from={120}><T size={104}>de forma <O>passiva.</O></T></Rise><div style={{ marginTop: 50, opacity: 0.5 }}><BizCard scale={0.6} /></div></B>
+      <B tl={tl9} i={6}><Rise now from={120}><T size={110}>O outro atrai de forma <O>ativa.</O></T></Rise><div style={{ marginTop: 170, position: "relative" }}><Ring /><MiniSite scale={0.7} /></div></B>
+      <B tl={tl9} i={7}><Pop now><T size={130}>Agora me <O>responde:</O></T></Pop></B>
+      <B tl={tl9} i={8}>
         <div style={{ display: "flex", gap: 30, alignItems: "flex-start" }}>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
             <T size={50} color={C.mute}>Cartão</T><BizCard scale={0.7} /><PersonIcon size={90} color={C.mute} />
@@ -348,8 +373,8 @@ export const Reel9: React.FC = () => {
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap", width: 420, justifyContent: "center" }}>{Array.from({ length: 8 }).map((_, k) => <Pop key={k} delay={8 + k * 3}><PersonIcon size={80} /></Pop>)}</div>
           </div>
         </div>
+        <Rise delay={6} style={{ marginTop: 50 }}><T size={80}>Qual deles trabalha <O>por você?</O></T></Rise>
       </B>
-      <B tl={tl9} i={8}><CtaWord word="SITE" /><Signature /></B>
     </Reel>
   );
 };
@@ -357,7 +382,8 @@ export const Reel9: React.FC = () => {
 // =====================================================================
 // 10. Antes e depois de um negócio local
 // =====================================================================
-export const tl10 = timeline([2, 1.5, 2, 2, 2, 1.5, 2, 2, 1.5, 2.5]);
+// Reel 10 sincronizado com a narração (~24,4 s)
+export const tl10 = timeline([1.8, 1.4, 1.1, 1.9, 1.8, 2.2, 1.4, 2.3, 2.1, 2.2, 1.7, 1.8, 2.7]);
 
 const Badge: React.FC = () => (
   <div style={{ position: "absolute", top: 270, left: 0, right: 0, display: "flex", justifyContent: "center" }}>
@@ -406,24 +432,27 @@ const Orders: React.FC = () => {
 export const Reel10: React.FC = () => {
   const S = tl10.S;
   const sfx: SfxEvent[] = [
-    [0.02, "pop", 0.6], [S[1], "swipe", 0.35], [S[2], "pop", 0.5],
-    [S[3] + 0.1, "pop2", 0.4], [S[3] + 0.3, "pop2", 0.4], [S[3] + 0.5, "pop2", 0.4], [S[3] + 0.7, "pop2", 0.4], [S[3] + 0.9, "pop2", 0.4],
-    [S[4], "whoosh", 0.4], [S[4] + 0.6, "snap", 0.6], [S[5], "pop", 0.5], [S[5] + 0.1, "swipe", 0.3], [S[6], "pop", 0.5],
-    [S[7] + 0.05, "riser", 0.5], [S[7] + 1.2, "register", 0.6], [S[7] + 1.25, "ding", 0.5],
-    [S[8], "pop", 0.5], [S[9], "pop", 0.5], [S[9] + 0.3, "ding", 0.6],
+    [0.02, "pop", 0.5], [S[1], "swipe", 0.35], [S[2], "pop", 0.45], [S[2] + 0.2, "pop2", 0.4],
+    [S[3], "pop", 0.4], [S[4] + 0.2, "pop2", 0.35], [S[4] + 0.7, "pop2", 0.35],
+    [S[5], "whoosh", 0.35], [S[5] + 0.7, "snap", 0.55], [S[6], "pop", 0.45], [S[7], "pop", 0.4],
+    [S[8] + 0.05, "riser", 0.45], [S[9] + 0.8, "register", 0.55], [S[9] + 0.85, "ding", 0.45],
+    [S[10], "pop", 0.4], [S[11], "pop", 0.4], [S[12], "pop", 0.45], [S[12] + 0.3, "ding", 0.55],
   ];
   return (
-    <Reel music="r10" sfx={sfx}>
+    <Reel music="r10" musicVol={0.28} voice="voz10" sfx={sfx}>
       <B tl={tl10} i={0}><Rise now from={240}><T size={124}><O>Antes e depois</O> de um negócio local.</T></Rise><Badge /></B>
-      <B tl={tl10} i={1}><Shop color="#6A6563" size={340} /><Rise now from={120} style={{ marginTop: 30 }}><T size={150} color={C.mute}>Antes:</T></Rise><Badge /></B>
-      <B tl={tl10} i={2}><Rise now from={160}><T size={118}><O>5 pedidos</O> por semana. Todos por indicação.</T></Rise><Badge /></B>
-      <B tl={tl10} i={3}><Orders /><T size={60} color={C.mute}>pedidos por semana</T><div style={{ marginTop: 50 }}><Bars heights={[0.12, 0.14, 0.12, 0.15, 0.13]} max={240} /></div><Badge /></B>
-      <B tl={tl10} i={4}><Morph /><Rise now from={120} style={{ marginTop: 30 }}><T size={100}>Mesmo negócio. Agora <O>com site.</O></T></Rise><Badge /></B>
-      <B tl={tl10} i={5}><Rise now from={200}><T size={170}><O>Depois:</O></T></Rise><Badge /></B>
-      <B tl={tl10} i={6}><Rise now from={160}><T size={118}>O <O>Google</O> traz clientes novos.</T></Rise><Badge /></B>
-      <B tl={tl10} i={7}><Bars heights={[0.14, 0.25, 0.4, 0.6, 0.8, 1]} /><Badge /></B>
-      <B tl={tl10} i={8}><Pop now><T size={120}><O>Exemplo</O> ilustrativo.</T></Pop><Badge /></B>
-      <B tl={tl10} i={9}><CtaWord word="QUERO" lead="Quer isso? Comente" /><Signature /></B>
+      <B tl={tl10} i={1}><Shop color="#6A6563" size={340} /><Rise now from={120} style={{ marginTop: 30 }}><T size={120} color={C.mute}>Antes: chegava em média</T></Rise><Badge /></B>
+      <B tl={tl10} i={2}><Orders /><T size={64} color={C.white}>pedidos por semana</T><Badge /></B>
+      <B tl={tl10} i={3}><Rise now from={160}><T size={120}>Todos por <O>indicação.</O></T></Rise><Rise delay={12} style={{ marginTop: 30 }}><T size={64} color={C.mute}>Orgânico.</T></Rise><Badge /></B>
+      <B tl={tl10} i={4}><Rise now from={120}><T size={112}>Sempre os <O>mesmos clientes.</O></T></Rise><div style={{ marginTop: 50 }}><Bars heights={[0.12, 0.14, 0.12, 0.15, 0.13]} max={240} /></div><Badge /></B>
+      <B tl={tl10} i={5}><Morph /><Rise now from={120} style={{ marginTop: 30 }}><T size={100}>Mesmo negócio. Agora <O>com site.</O></T></Rise><Badge /></B>
+      <B tl={tl10} i={6}><Rise now from={200}><T size={170}><O>Depois:</O></T></Rise><Badge /></B>
+      <B tl={tl10} i={7}><Rise now from={160}><T size={112}>O <O>Google</O> traz clientes novos todos os dias.</T></Rise><Badge /></B>
+      <B tl={tl10} i={8}><Rise now from={100}><T size={90} style={{ marginBottom: 40 }}>Os pedidos <O>aumentam</O></T></Rise><Bars heights={[0.14, 0.25, 0.4, 0.55]} /><Badge /></B>
+      <B tl={tl10} i={9}><Rise now from={100}><T size={90} style={{ marginBottom: 40 }}>e o negócio <O>cresce.</O></T></Rise><Bars heights={[0.14, 0.25, 0.4, 0.6, 0.8, 1]} /><Badge /></B>
+      <B tl={tl10} i={10}><Rise now from={160}><T size={120}>O site trabalha <O>por você.</O></T></Rise><Badge /></B>
+      <B tl={tl10} i={11}><Pop now><T size={112}><O>Exemplo</O> ilustrativo do crescimento.</T></Pop><Badge /></B>
+      <B tl={tl10} i={12}><CtaWord word="QUERO" lead="Quer isso para o seu negócio? Comente" /><Signature /></B>
     </Reel>
   );
 };

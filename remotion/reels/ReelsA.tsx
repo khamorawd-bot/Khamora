@@ -251,9 +251,9 @@ export const Reel2: React.FC = () => {
 };
 
 // =====================================================================
-// 3. Instagram não é seu
+// 3. Instagram não é seu  (sincronizado com a narração: ~29 s)
 // =====================================================================
-export const tl3 = timeline([2, 2, 1.5, 2, 1.5, 2, 1.5, 2, 2, 2.5]);
+export const tl3 = timeline([2.55, 1.85, 1.8, 1.1, 1.5, 1.6, 1.3, 1.5, 2.5, 2.3, 1.2, 2.1, 0.8, 2.3, 1.7, 2.6]);
 
 const NotifInner: React.FC<{ text: string }> = ({ text }) => (
   <div style={{ width: 960, display: "flex", alignItems: "center", gap: 28, background: C.card, borderRadius: 36, padding: "34px 40px", border: "2px solid rgba(255,255,255,0.1)" }}>
@@ -267,15 +267,15 @@ const NotifInner: React.FC<{ text: string }> = ({ text }) => (
   </div>
 );
 
-// frame global da notificação: queda 0-24, quebra em f(2.0)=60
-const Notif: React.FC<{ text: string; offset: number }> = ({ text, offset }) => {
+// queda 0-24 quadros e quebra em `breakF` (quadros desde o início da notificação)
+const Notif: React.FC<{ text: string; offset: number; breakF: number }> = ({ text, offset, breakF }) => {
   const frame = useCurrentFrame() + offset;
-  const { fps } = { fps: 30 };
-  const fall = useSpAt(frame, 0);
+  const x0 = Math.min(1, frame / 24);
+  const fall = x0 < 1 ? 1 - Math.pow(1 - x0, 3) + Math.sin(x0 * Math.PI * 2.2) * (1 - x0) * 0.12 : 1;
   const y = (1 - fall) * -900;
-  const br = frame - 60;
+  const br = frame - breakF;
   if (br < 0) {
-    const shake = frame > 40 ? Math.sin(frame * 2.4) * 5 : 0;
+    const shake = frame > breakF - 20 ? Math.sin(frame * 2.4) * 5 : 0;
     return <div style={{ transform: `translate(${shake}px, ${y}px)` }}><NotifInner text={text} /></div>;
   }
   const k = Math.min(1, br / 24);
@@ -283,7 +283,6 @@ const Notif: React.FC<{ text: string; offset: number }> = ({ text, offset }) => 
   const clipL = "polygon(0 0, 54% 0, 46% 30%, 56% 60%, 47% 100%, 0 100%)";
   const clipR = "polygon(54% 0, 100% 0, 100% 100%, 47% 100%, 56% 60%, 46% 30%)";
   const fade = interpolate(br, [10, 30], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  void fps;
   return (
     <div style={{ position: "relative", opacity: fade }}>
       <div style={{ clipPath: clipL, transform: `translate(${-120 * e}px, ${700 * e}px) rotate(${-24 * e}deg)` }}><NotifInner text={text} /></div>
@@ -291,36 +290,34 @@ const Notif: React.FC<{ text: string; offset: number }> = ({ text, offset }) => 
     </div>
   );
 };
-const useSpAt = (frame: number, delay: number) => {
-  const s = Math.max(0, frame - delay) / 24;
-  // queda com quique simples
-  const x = Math.min(1, s);
-  return x < 1 ? 1 - Math.pow(1 - x, 3) + Math.sin(x * Math.PI * 2.2) * (1 - x) * 0.12 : 1;
-};
 
-const Risk: React.FC<{ n: number; label: string; msg: string; offset: number }> = ({ n, label, msg, offset }) => (
+const RiskLabel: React.FC<{ n: number }> = ({ n }) => (
+  <Pop now><T size={90} color={C.orange} style={{ letterSpacing: 10 }}>RISCO</T><T size={300} color={C.white} style={{ letterSpacing: -8 }}>{n}</T></Pop>
+);
+const Risk: React.FC<{ n: number; title: React.ReactNode; msg: string; offset: number; breakF: number }> = ({ n, title, msg, offset, breakF }) => (
   <>
-    <Rise now from={60}><T size={54} color={C.orange} style={{ letterSpacing: 8, marginBottom: 16 }}>RISCO {n}</T></Rise>
-    <Rise now from={60}><T size={96} style={{ marginBottom: 70 }}>{label}</T></Rise>
-    <Notif text={msg} offset={offset} />
+    <Rise now from={60}><T size={50} color={C.orange} style={{ letterSpacing: 8, marginBottom: 16 }}>RISCO {n}</T></Rise>
+    <Rise now from={60}><T size={96} style={{ marginBottom: 70 }}>{title}</T></Rise>
+    <Notif text={msg} offset={offset} breakF={breakF} />
   </>
 );
 
 export const Reel3: React.FC = () => {
   const S = tl3.S;
   const sfx: SfxEvent[] = [
-    [0.02, "boom", 0.55],
-    [S[1] + 0.1, "vibrate", 0.55], [S[2] + 0.02, "glass", 0.6],
-    [S[3] + 0.1, "vibrate", 0.55], [S[4] + 0.02, "glass", 0.6],
-    [S[5] + 0.1, "vibrate", 0.55], [S[6] + 0.02, "glass", 0.6],
-    [S[7], "swipe", 0.4], [S[7] + 0.35, "door", 0.7],
-    [S[8] + 0.1, "snap", 0.6], [S[8] + 0.5, "snap", 0.6], [S[8] + 0.9, "snap", 0.6], [S[8] + 1.2, "relief", 0.6],
-    [S[9], "pop", 0.5], [S[9] + 0.25, "ding", 0.6],
+    [0.02, "boom", 0.5],
+    [S[1], "pop", 0.4], [S[2], "pop", 0.4],
+    [S[3], "whoosh", 0.3], [S[4] + 0.1, "vibrate", 0.5], [S[5] + 0.02, "glass", 0.55],
+    [S[6], "whoosh", 0.3], [S[7] + 0.1, "vibrate", 0.5], [S[8] + 0.02, "glass", 0.55], [S[9], "pop", 0.4],
+    [S[10], "whoosh", 0.3], [S[11] + 0.1, "vibrate", 0.5], [S[12] + 0.02, "glass", 0.55],
+    [S[13], "swipe", 0.35], [S[13] + 0.4, "door", 0.65],
+    [S[13] + 0.8, "snap", 0.55], [S[13] + 1.2, "snap", 0.55], [S[13] + 1.6, "snap", 0.55], [S[13] + 1.8, "relief", 0.55],
+    [S[14], "pop", 0.4], [S[15], "pop", 0.45], [S[15] + 0.3, "ding", 0.55],
   ];
   const HouseBuild: React.FC = () => {
     const a = useSp(0, 12, 140), b = useSp(14, 12, 140), c = useSp(28, 12, 160);
     return (
-      <svg width="560" height="560" viewBox="0 0 200 200">
+      <svg width="520" height="520" viewBox="0 0 200 200">
         <g style={{ opacity: Math.min(1, a * 3) }} transform={`translate(0 ${(1 - a) * 90})`}><rect x="34" y="96" width="132" height="80" fill={C.orange} /></g>
         <g style={{ opacity: Math.min(1, b * 3) }} transform={`translate(0 ${(1 - b) * -140})`}><path d="M100 18 L190 100 H10 Z" fill={C.orange2} /></g>
         <g style={{ opacity: Math.min(1, c * 3) }} transform={`translate(100 176) scale(${c}) translate(-100 -176)`}>
@@ -329,39 +326,49 @@ export const Reel3: React.FC = () => {
       </svg>
     );
   };
+  const f1 = f(tl3.D[4]), f2 = f(tl3.D[7]), f3 = f(tl3.D[11]);
+  const T1 = <>O <O>algoritmo</O> muda constantemente.</>;
   return (
-    <Reel music="r3" sfx={sfx}>
-      <B tl={tl3} i={0}><Rise now from={260}><T size={150}>Seu Instagram <O>não é seu.</O></T></Rise></B>
-      <B tl={tl3} i={1}><Risk n={1} label="O algoritmo muda." msg="Seu alcance mudou." offset={0} /></B>
-      <B tl={tl3} i={2}><Risk n={1} label="O algoritmo muda." msg="Seu alcance mudou." offset={f(2)} /></B>
-      <B tl={tl3} i={3}><Risk n={2} label="A conta pode ser bloqueada." msg="Conta bloqueada." offset={0} /></B>
-      <B tl={tl3} i={4}><Risk n={2} label="A conta pode ser bloqueada." msg="Conta bloqueada." offset={f(2)} /></B>
-      <B tl={tl3} i={5}><Risk n={3} label="Cliente confia mais em endereço próprio." msg="Cliente: qual o site de vocês?" offset={0} /></B>
-      <B tl={tl3} i={6}><Risk n={3} label="Cliente confia mais em endereço próprio." msg="Cliente: qual o site de vocês?" offset={f(2)} /></B>
-      <B tl={tl3} i={7}><Rise now from={220}><T size={130}>Ter site é ter <O>sua casa.</O></T></Rise></B>
-      <B tl={tl3} i={8}><HouseBuild /></B>
-      <B tl={tl3} i={9}>
-        <Pop now><HouseIcon size={300} /></Pop>
-        <div style={{ height: 30 }} />
+    <Reel music="r3" musicVol={0.28} voice="voz3" sfx={sfx}>
+      <B tl={tl3} i={0}><Rise now from={260}><T size={134}>Você sabe que seu Instagram <O>não é seu?</O></T></Rise></B>
+      <B tl={tl3} i={1}><Rise now from={200}><T size={120}>Ter um negócio só nas <O>redes sociais</O></T></Rise></B>
+      <B tl={tl3} i={2}><Rise now from={200}><T size={130}>traz alguns <O>riscos.</O></T></Rise></B>
+      <B tl={tl3} i={3}><RiskLabel n={1} /></B>
+      <B tl={tl3} i={4}><Risk n={1} title="O algoritmo" msg="Seu alcance mudou." offset={0} breakF={f1} /></B>
+      <B tl={tl3} i={5}><Risk n={1} title="muda constantemente." msg="Seu alcance mudou." offset={f1} breakF={f1} /></B>
+      <B tl={tl3} i={6}><RiskLabel n={2} /></B>
+      <B tl={tl3} i={7}><Risk n={2} title="A conta pode ser bloqueada." msg="Conta bloqueada." offset={0} breakF={f2} /></B>
+      <B tl={tl3} i={8}><Risk n={2} title="Acontece até com famosos e influenciadores" msg="Conta bloqueada." offset={f2} breakF={f2} /></B>
+      <B tl={tl3} i={9}><Rise now from={200}><T size={116}>por pessoas <O>mal-intencionadas.</O></T></Rise></B>
+      <B tl={tl3} i={10}><RiskLabel n={3} /></B>
+      <B tl={tl3} i={11}><Risk n={3} title="Cliente confia mais em endereço próprio." msg="Cliente: qual o site de vocês?" offset={0} breakF={f3} /></B>
+      <B tl={tl3} i={12}><Risk n={3} title="Cliente confia mais em endereço próprio." msg="Cliente: qual o site de vocês?" offset={f3} breakF={f3} /></B>
+      <B tl={tl3} i={13}><HouseBuild /><Rise delay={6} style={{ marginTop: 30 }}><T size={112}>Ter um site é ter <O>a sua casa.</O></T></Rise></B>
+      <B tl={tl3} i={14}><Pop now><HouseIcon size={280} /></Pop><Rise delay={4} style={{ marginTop: 30 }}><T size={104}>Um lugar que <O>ninguém tira</O> de você.</T></Rise></B>
+      <B tl={tl3} i={15}>
+        <Pop now><HouseIcon size={220} /></Pop>
+        <div style={{ height: 20 }} />
         <CtaWord word="CASA" />
+        <Rise delay={18} style={{ marginTop: 40 }}><T size={56} weight={500} color={C.white}>e dá uma olhada na DM.</T></Rise>
       </B>
     </Reel>
   );
+  void T1;
 };
 
 // =====================================================================
-// 4. Só 4 coisas para o primeiro dia
+// 4. Só 4 coisas para o primeiro dia  (sincronizado com a narração: ~36,5 s)
 // =====================================================================
-export const tl4 = timeline([2, 2, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2.5]);
+export const tl4 = timeline([2.3, 2.5, 2.0, 2.6, 2.3, 2.1, 2.0, 2.9, 3.1, 2.9, 2.1, 1.6, 1.5, 2.3, 1.5, 2.8]);
 
-const Page: React.FC<{ k: number }> = ({ k }) => {
+const Page: React.FC<{ k: number; fresh?: boolean }> = ({ k, fresh = false }) => {
   const frame = useCurrentFrame();
   const drop = (n: number) => {
-    const t = n === k ? Math.min(1, frame / 14) : 1;
-    return { opacity: n <= k ? 1 : 0, transform: `translateY(${(1 - t) * -400}px) scale(${n === k ? 1 + 0.06 * (1 - t) : 1})` };
+    const t = n === k && fresh ? Math.min(1, frame / 14) : 1;
+    return { opacity: n <= k ? 1 : 0, transform: `translateY(${(1 - t) * -400}px) scale(${n === k && fresh ? 1 + 0.06 * (1 - t) : 1})` };
   };
   return (
-    <Browser width={880} height={900}>
+    <Browser width={880} height={820}>
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         <div style={{ ...drop(1), background: C.orange, borderRadius: 22, padding: "36px 34px", height: 170 }}>
           <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 46, color: C.bg }}>Quem você é</div>
@@ -388,49 +395,55 @@ const Page: React.FC<{ k: number }> = ({ k }) => {
 const Item: React.FC<{ n: number; label: React.ReactNode }> = ({ n, label }) => (
   <>
     <Pop now><div style={{ width: 190, height: 190, borderRadius: 95, background: C.orange, display: "flex", alignItems: "center", justifyContent: "center" }}><T size={130} color={C.bg}>{n}</T></div></Pop>
-    <Rise now from={100} style={{ marginTop: 50 }}><T size={120}>{label}</T></Rise>
+    <Rise now from={100} style={{ marginTop: 50 }}><T size={118}>{label}</T></Rise>
+  </>
+);
+const PageCap: React.FC<{ k: number; fresh?: boolean; children: React.ReactNode }> = ({ k, fresh, children }) => (
+  <>
+    <Rise now from={80} style={{ marginBottom: 44 }}><T size={78}>{children}</T></Rise>
+    <Page k={k} fresh={fresh} />
   </>
 );
 
 export const Reel4: React.FC = () => {
   const S = tl4.S;
   const sfx: SfxEvent[] = [
-    [0.02, "pop", 0.6], [S[1], "whoosh", 0.4],
-    [S[2], "pop", 0.5], [S[3] + 0.15, "snap", 0.7],
-    [S[4], "pop", 0.5], [S[5] + 0.15, "snap", 0.7],
-    [S[6], "pop", 0.5], [S[7] + 0.15, "snap", 0.7],
-    [S[8], "pop", 0.5], [S[9] + 0.15, "snap", 0.7],
-    [S[10] + 0.2, "ding", 0.7], [S[10] + 0.25, "confetti", 0.5], [S[11], "pop", 0.5], [S[11] + 0.3, "ding", 0.6],
-  ];
-  const items: [number, React.ReactNode][] = [
-    [1, <>Quem <O>você é.</O></>],
-    [2, <>O que <O>vende.</O></>],
-    [3, <><O>Provas:</O> fotos e depoimentos.</>],
-    [4, <>Botão do <O>WhatsApp.</O></>],
+    [0.02, "pop", 0.5], [S[1], "whoosh", 0.3],
+    [S[2], "pop", 0.4], [S[3] + 0.15, "snap", 0.6], [S[4], "pop", 0.35],
+    [S[5], "pop", 0.4], [S[6] + 0.15, "snap", 0.6],
+    [S[7], "pop", 0.4], [S[8] + 0.15, "snap", 0.6],
+    [S[9], "pop", 0.4], [S[10], "pop", 0.4], [S[11] + 0.15, "snap", 0.6],
+    [S[13], "ding", 0.6], [S[13] + 0.05, "confetti", 0.45], [S[14], "pop", 0.4], [S[15], "pop", 0.45], [S[15] + 0.3, "ding", 0.5],
   ];
   return (
-    <Reel music="r4" sfx={sfx}>
+    <Reel music="r4" musicVol={0.28} voice="voz4" sfx={sfx}>
       <B tl={tl4} i={0}><Rise now from={240}><T size={124}>Você não precisa de um site <O>gigante.</O></T></Rise></B>
-      <B tl={tl4} i={1}><Rise now from={200}><T size={120}>Só <O>4 coisas</O> para o primeiro dia.</T></Rise></B>
-      {items.map(([n, label], q) => (
-        <>
-          <B key={`a${n}`} tl={tl4} i={2 + q * 2}><Item n={n} label={label} /></B>
-          <B key={`b${n}`} tl={tl4} i={3 + q * 2}><Page k={n} /></B>
-        </>
-      ))}
-      <B tl={tl4} i={10}>
+      <B tl={tl4} i={1}><Rise now from={200}><T size={120}>Você precisa de só <O>4 coisas.</O></T></Rise></B>
+      <B tl={tl4} i={2}><Item n={1} label={<>Quem <O>você é.</O></>} /></B>
+      <B tl={tl4} i={3}><PageCap k={1} fresh>Uma apresentação da sua <O>marca.</O></PageCap></B>
+      <B tl={tl4} i={4}><Rise now from={160}><T size={104}>Preciso saber <O>de quem</O> eu vou comprar.</T></Rise></B>
+      <B tl={tl4} i={5}><Item n={2} label={<>O que <O>você vende?</O></>} /></B>
+      <B tl={tl4} i={6}><PageCap k={2} fresh>Qual é o seu <O>serviço</O> e produto?</PageCap></B>
+      <B tl={tl4} i={7}><Item n={3} label={<><O>Provas:</O> fotos e depoimentos.</>} /></B>
+      <B tl={tl4} i={8}><PageCap k={3} fresh>Por que eu deveria <O>comprar de você.</O></PageCap></B>
+      <B tl={tl4} i={9}><Item n={4} label={<>Botão do <O>WhatsApp</O> (CTA)</>} /></B>
+      <B tl={tl4} i={10}><Rise now from={160}><T size={116}><O>Call</O> to <O>Action.</O></T></Rise></B>
+      <B tl={tl4} i={11}><PageCap k={4} fresh>Para onde o cliente <O>vai agora</O></PageCap></B>
+      <B tl={tl4} i={12}><Rise now from={160}><T size={104}>e como ele <O>fala com você.</O></T></Rise></B>
+      <B tl={tl4} i={13}>
         <Pop now><Page k={4} /></Pop>
-        <Rise delay={10} style={{ marginTop: 50 }}><T size={100}>Sua página <O>no ar.</O></T></Rise>
+        <Rise delay={8} style={{ marginTop: 50 }}><T size={100}>Pronto! Sua primeira página <O>no ar.</O></T></Rise>
       </B>
-      <B tl={tl4} i={11}><CtaWord word="4" /><Signature /></B>
+      <B tl={tl4} i={14}><Pop now><T size={130}>Sem <O>complicação.</O></T></Pop></B>
+      <B tl={tl4} i={15}><CtaWord word="4" /><Rise delay={18} style={{ marginTop: 30 }}><T size={56} weight={500} color={C.white}>e confere sua DM.</T></Rise><Signature /></B>
     </Reel>
   );
 };
 
 // =====================================================================
-// 5. Sinais de que é hora de ter site
+// 5. Sinais de que é hora de ter site  (sincronizado com a narração: ~28 s)
 // =====================================================================
-export const tl5 = timeline([2, 2, 2, 2, 2, 2, 2, 2, 2, 2]);
+export const tl5 = timeline([1.5, 1.8, 2.65, 1.95, 2.6, 1.3, 1.6, 1.6, 1.8, 1.3, 1.8, 2.1, 2.8, 1.5, 1.7]);
 
 const Bubble: React.FC<{ text: string; me?: boolean; delay: number; size?: number }> = ({ text, me, delay, size = 56 }) => {
   const s = useSp(delay, 12, 170);
@@ -453,7 +466,7 @@ const Chat: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div style={{ width: 900, display: "flex", flexDirection: "column", gap: 22 }}>{children}</div>
 );
 const Caption: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Rise now from={80} style={{ marginBottom: 56 }}><T size={78}>{children}</T></Rise>
+  <Rise now from={80} style={{ marginBottom: 56 }}><T size={80}>{children}</T></Rise>
 );
 const Photos: React.FC = () => {
   const n = useCount(20, 0, 40);
@@ -468,56 +481,44 @@ const Photos: React.FC = () => {
     </>
   );
 };
-const Repeat: React.FC = () => (
-  <Chat>
-    <Bubble text="Qual o endereço?" delay={0} />
-    <Bubble text="Qual o endereço?" delay={14} />
-    <Bubble text="Qual o endereço?" delay={28} />
-    <Rise delay={42} style={{ marginTop: 30 }}><T size={100} color={C.orange}>de novo?</T></Rise>
-  </Chat>
+const Num: React.FC<{ n: number }> = ({ n }) => (
+  <Pop now><div style={{ width: 120, height: 120, borderRadius: 60, background: C.orange, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 36 }}><T size={80} color={C.bg}>{n}</T></div></Pop>
 );
 
 export const Reel5: React.FC = () => {
   const S = tl5.S;
   const sfx: SfxEvent[] = [
-    [0.02, "pop", 0.6], [0.4, "msg", 0.5],
-    [S[1] + 0.2, "msg", 0.55], [S[2] + 0.1, "pop2", 0.4], [S[2] + 0.5, "pop2", 0.4], [S[2] + 0.9, "pop2", 0.4], [S[2] + 1.35, "womp", 0.5],
-    [S[3] + 0.2, "msg", 0.55], [S[4] + 0.1, "msg", 0.5], [S[4] + 0.5, "msg", 0.5], [S[4] + 0.9, "msg", 0.5], [S[4] + 1.35, "womp", 0.5],
-    [S[5] + 0.2, "msg", 0.55], [S[6] + 0.4, "msg", 0.5], [S[6] + 1.2, "sigh", 0.5],
-    [S[7], "swipe", 0.4], [S[7] + 0.3, "ding", 0.55], [S[8] + 0.2, "pop", 0.5], [S[9], "pop", 0.5], [S[9] + 0.3, "ding", 0.6],
+    [0.02, "pop", 0.5], [S[1], "pop", 0.4],
+    [S[2] + 0.1, "pop", 0.4], [S[2] + 0.5, "msg", 0.5], [S[3] + 0.1, "pop2", 0.4], [S[3] + 0.45, "pop2", 0.4], [S[3] + 0.8, "pop2", 0.4], [S[3] + 1.3, "womp", 0.45],
+    [S[4] + 0.1, "pop", 0.4], [S[4] + 0.5, "msg", 0.5], [S[4] + 1.4, "msg", 0.5], [S[5] + 0.1, "msg", 0.5], [S[6] + 0.1, "msg", 0.5], [S[7] + 0.1, "womp", 0.45],
+    [S[8], "pop", 0.4], [S[9] + 0.1, "msg", 0.5], [S[10] + 0.1, "msg", 0.5], [S[10] + 0.9, "sigh", 0.45],
+    [S[11], "swipe", 0.35], [S[11] + 0.3, "ding", 0.5], [S[12] + 0.2, "pop", 0.4], [S[13], "pop", 0.45], [S[14], "pop", 0.4], [S[14] + 0.3, "ding", 0.5],
   ];
   return (
-    <Reel music="r5" sfx={sfx}>
-      <B tl={tl5} i={0}>
-        <Rise now from={240}><T size={124}>Se isso acontece, você precisa de um <O>site.</O></T></Rise>
+    <Reel music="r5" musicVol={0.28} voice="voz5" sfx={sfx}>
+      <B tl={tl5} i={0}><Rise now from={240}><T size={128}>Se isso ainda <O>acontece...</O></T></Rise></B>
+      <B tl={tl5} i={1}><Rise now from={200}><T size={124}>você precisa de um <O>site.</O></T></Rise></B>
+      <B tl={tl5} i={2}>
+        <Num n={1} />
+        <Caption>O cliente pede <O>catálogo</O></Caption>
+        <Chat><Bubble text="Vocês têm catálogo?" delay={6} /><Typing delay={24} /></Chat>
       </B>
-      <B tl={tl5} i={1}>
-        <Caption>Cliente pede <O>catálogo</O> e você manda 20 fotos.</Caption>
-        <Chat><Bubble text="Vocês têm catálogo?" delay={4} /><Typing delay={20} /></Chat>
+      <B tl={tl5} i={3}><Photos /></B>
+      <B tl={tl5} i={4}>
+        <Num n={2} />
+        <Caption>Perguntam o <O>endereço</O></Caption>
+        <Chat><Bubble text="Qual o endereço?" delay={6} /><Bubble text="Rua das Flores, 120" me delay={26} /></Chat>
       </B>
-      <B tl={tl5} i={2}><Photos /></B>
-      <B tl={tl5} i={3}>
-        <Caption>Perguntam o <O>endereço</O> de novo.</Caption>
-        <Chat><Bubble text="Qual o endereço?" delay={4} /><Bubble text="Rua das Flores, 120" me delay={22} /></Chat>
-      </B>
-      <B tl={tl5} i={4}><Repeat /></B>
-      <B tl={tl5} i={5}>
-        <Caption>“Vocês têm <O>site?</O>”</Caption>
-        <Chat><Bubble text="Vocês têm site?" delay={4} /><Typing delay={22} /></Chat>
-      </B>
-      <B tl={tl5} i={6}>
-        <Chat>
-          <Bubble text="Vocês têm site?" delay={0} />
-          <Bubble text="Ainda não…" me delay={14} />
-        </Chat>
-        <Rise delay={36} style={{ marginTop: 50 }}><T size={80} color={C.mute}>silêncio.</T></Rise>
-      </B>
-      <B tl={tl5} i={7}><Rise now from={200}><T size={118}>Tudo isso se resolve com um <O>site.</O></T></Rise></B>
-      <B tl={tl5} i={8}><Pop now><T size={130}>Seu cliente quer achar <O>tudo</O> em um lugar só.</T></Pop></B>
-      <B tl={tl5} i={9}>
-        <Rise now><T size={140}>Marque quem <O>precisa.</O></T></Rise>
-        <Signature />
-      </B>
+      <B tl={tl5} i={5}><Rise now from={120}><T size={110}>e de <O>novo</O></T></Rise><div style={{ marginTop: 50 }}><Chat><Bubble text="Qual o endereço?" delay={0} /><Bubble text="Qual o endereço?" delay={8} /></Chat></div></B>
+      <B tl={tl5} i={6}><Rise now from={120}><T size={110}>e de <O>novo.</O></T></Rise><div style={{ marginTop: 50 }}><Chat><Bubble text="Qual o endereço?" delay={0} /><Bubble text="Qual o endereço?" delay={6} /><Bubble text="Qual o endereço?" delay={12} /></Chat></div></B>
+      <B tl={tl5} i={7}><Pop now><T size={130}>Não é <O>possível.</O></T></Pop></B>
+      <B tl={tl5} i={8}><Num n={3} /><Rise now from={160}><T size={120}>E o <O>clássico:</O></T></Rise></B>
+      <B tl={tl5} i={9}><Chat><Bubble text="Vocês têm site?" delay={4} /><Typing delay={22} /></Chat></B>
+      <B tl={tl5} i={10}><Chat><Bubble text="Vocês só têm Instagram?" delay={0} /><Bubble text="Ainda não…" me delay={26} /></Chat></B>
+      <B tl={tl5} i={11}><Rise now from={200}><T size={118}>Tudo isso se resolve com um <O>site.</O></T></Rise></B>
+      <B tl={tl5} i={12}><Pop now><T size={124}>Seu cliente quer achar <O>tudo</O> em um lugar só.</T></Pop></B>
+      <B tl={tl5} i={13}><Rise now from={140}><T size={118}>Marque nos <O>comentários</O></T></Rise></B>
+      <B tl={tl5} i={14}><Rise now from={140}><T size={108}>uma marca que <O>precisa de um site.</O></T></Rise><Signature /></B>
     </Reel>
   );
 };
