@@ -328,8 +328,9 @@ export const Preco26: React.FC = () => {
         </Reveal>
       </Scene>
 
-      {/* narração + efeitos */}
+      {/* narração + trilha (bem baixa, ~16 dB abaixo da voz) + efeitos */}
       <Audio src={staticFile("remotion/audio/voz.mp3")} volume={1} />
+      <Audio src={staticFile("remotion/audio/musica.mp3")} volume={0.5} />
       {SFX.map(([at, name, v], i) => (
         <Sfx key={i} at={at} name={name} volume={v} />
       ))}
